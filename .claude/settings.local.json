@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create:*)",
+      "Bash(mv manan-portfolio/* .)",
+      "Bash(mv manan-portfolio/.* .)",
+      "Bash(rmdir manan-portfolio:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(./node_modules/.bin/tailwindcss init:*)",
+      "Bash(npm run:*)"
+    ]
+  }
+}
