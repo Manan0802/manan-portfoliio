@@ -9,4 +9,21 @@ export default defineConfig({
       '@': '/src',
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('three') || id.includes('@react-three') || id.includes('@splinetool')) {
+              return 'vendor-3d';
+            }
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react';
+            }
+            return 'vendor-core';
+          }
+        }
+      }
+    }
+  }
 })

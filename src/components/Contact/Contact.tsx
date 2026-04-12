@@ -5,6 +5,7 @@ import { FiGithub, FiLinkedin, FiMail, FiCode } from 'react-icons/fi';
 import { Particles } from '../Character/Particles';
 import { Canvas } from '@react-three/fiber';
 import emailjs from '@emailjs/browser';
+import { PopupModal, useCalendlyEventListener } from 'react-calendly';
 import './Contact.css';
 
 const socialLinks = [
@@ -23,6 +24,12 @@ export const Contact: React.FC = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isCalendlyOpen, setIsCalendlyOpen] = useState(false);
+
+  useCalendlyEventListener({
+    onProfilePageViewed: () => console.log('Calendly opened'),
+    onEventScheduled: (e) => console.log(e.data.payload.event.uri),
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -48,12 +55,7 @@ export const Contact: React.FC = () => {
 
       setIsSubmitting(false);
       setSubmitted(true);
-
-      // Reset after 3 seconds
-      setTimeout(() => {
-        setSubmitted(false);
-        setFormData({ name: '', email: '', message: '', type: 'Looking to Hire' });
-      }, 3000);
+      setIsCalendlyOpen(true); // Open Calendly automatically after email success
     } catch (error) {
       console.error('Failed to send message:', error);
       setIsSubmitting(false);
@@ -62,13 +64,13 @@ export const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="py-32 px-6 relative overflow-hidden">
+    <section id="contact" className="pt-32 pb-12 px-6 relative overflow-hidden z-20">
       {/* Starfield Background */}
       <div className="absolute inset-0 pointer-events-none">
         <Canvas
           camera={{ position: [0, 0, 5], fov: 45 }}
           gl={{ antialias: true, alpha: true }}
-          frameloop="demand"
+          frameloop="always"
         >
           <Particles count={5000} />
         </Canvas>
@@ -81,44 +83,54 @@ export const Contact: React.FC = () => {
           glow="purple"
         />
 
-        <div className="grid md:grid-cols-2 gap-16">
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Left: Contact Info */}
-          <div className="space-y-8">
+          <div className="space-y-10">
             <div>
-              <h3 className="text-2xl font-space-grotesk text-white mb-6">
-                Let's Connect
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium mb-6">
+                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                Accepting Freelance Projects
+              </div>
+              <h3 className="text-4xl md:text-5xl font-space-grotesk text-white mb-6 leading-tight">
+                Let's build the <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">
+                  next big thing.
+                </span>
               </h3>
-              <p className="text-secondary leading-relaxed mb-8">
-                Whether you're looking to hire me full-time or want to collaborate
-                on a freelance project, I'm always open to discussing new opportunities.
+              <p className="text-secondary text-lg leading-relaxed border-l-4 border-primary/30 pl-4">
+                Whether you need a massive AI data pipeline, a scalable web application, or a complete technical engineering partner, I'm ready to bring your vision to production. No excuses, just shipped systems.
               </p>
             </div>
 
-            {/* Social Links */}
-            <div className="flex gap-4">
+            <div className="grid grid-cols-2 gap-6">
+               {/* Location */}
+               <div className="glass p-6 rounded-2xl border border-white/5 hover:border-primary/20 transition-colors group">
+                 <p className="text-secondary text-sm mb-2 uppercase tracking-wider">Location</p>
+                 <p className="text-white font-medium text-lg">New Delhi, India</p>
+                 <p className="text-sm text-primary mt-1 group-hover:glow-text-blue transition-all">Remote Worldwide 🌍</p>
+               </div>
+               {/* Response Time */}
+               <div className="glass p-6 rounded-2xl border border-white/5 hover:border-purple-500/20 transition-colors group">
+                 <p className="text-secondary text-sm mb-2 uppercase tracking-wider">Response</p>
+                 <p className="text-white font-medium text-lg">&lt; 24 Hours</p>
+                 <p className="text-sm text-purple-400 mt-1 group-hover:glow-text-purple transition-all">Guaranteed ⚡</p>
+               </div>
+            </div>
+
+            {/* Social Links Grid */}
+            <div className="flex flex-wrap gap-4">
               {socialLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-12 h-12 glass rounded-full flex items-center justify-center text-secondary hover:text-primary hover:glow-blue transition-all duration-300 hover:-translate-y-1"
-                  data-cursor="hover"
-                  aria-label={link.label}
+                  className="flex items-center gap-3 px-6 py-4 glass rounded-xl border border-white/5 hover:border-primary/50 text-secondary hover:text-white transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:-translate-y-1 group"
                 >
-                  {link.icon}
+                  <span className="text-xl group-hover:text-primary transition-colors">{link.icon}</span>
+                  <span className="font-medium">{link.label}</span>
                 </a>
               ))}
-            </div>
-
-            {/* CTAs */}
-            <div className="flex flex-col gap-4 pt-8">
-              <GlowButton variant="primary" size="lg">
-                Hire Me — Full Time
-              </GlowButton>
-              <GlowButton variant="outline" size="lg">
-                Let's Build Something
-              </GlowButton>
             </div>
           </div>
 
@@ -201,19 +213,51 @@ export const Contact: React.FC = () => {
                   />
                 </div>
 
-                <GlowButton
-                  variant="primary"
-                  size="lg"
-                  className="w-full"
-                  icon={isSubmitting ? '⏳' : '🚀'}
-                >
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
-                </GlowButton>
+                <div className="flex flex-col gap-4">
+                  <GlowButton
+                    variant="primary"
+                    size="lg"
+                    className="w-full"
+                    icon={isSubmitting ? '⏳' : '🚀'}
+                  >
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
+                  </GlowButton>
+
+                  <div className="relative flex items-center py-2">
+                    <div className="flex-grow border-t border-white/5"></div>
+                    <span className="flex-shrink-0 mx-4 text-xs text-secondary font-mono tracking-widest uppercase">Or</span>
+                    <div className="flex-grow border-t border-white/5"></div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsCalendlyOpen(true)}
+                    className="w-full px-8 py-4 bg-[#0A0A0A] border border-white/20 text-white rounded-lg font-space-grotesk tracking-widest uppercase text-sm hover:bg-white/10 hover:border-white/40 transition-all duration-300 flex items-center justify-center gap-3 group shadow-[0_0_20px_rgba(255,255,255,0.05)] hover:shadow-[0_0_25px_rgba(255,255,255,0.15)]"
+                  >
+                    <span className="text-lg">🗓️</span> 
+                    Schedule a Call
+                  </button>
+                </div>
               </form>
             )}
           </div>
         </div>
       </div>
+      
+      {/* Calendly Popup Element directly injects to root */}
+      <PopupModal
+        url="https://calendly.com/manan-kumar"
+        pageSettings={{
+          backgroundColor: '0a0a0a',
+          hideEventTypeDetails: false,
+          hideLandingPageDetails: false,
+          primaryColor: '3b82f6',
+          textColor: 'ffffff'
+        }}
+        onModalClose={() => setIsCalendlyOpen(false)}
+        open={isCalendlyOpen}
+        rootElement={document.getElementById('root')!}
+      />
     </section>
   );
 };

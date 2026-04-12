@@ -3,6 +3,7 @@ import { FiX, FiGithub, FiExternalLink, FiCode } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Project } from '../../data/projects';
 import './ProjectModal.css';
+import { ArchitectureDiagram } from './ArchitectureDiagram';
 
 interface ProjectModalProps {
   project: Project | null;
@@ -68,6 +69,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
                   src={project.image}
                   alt={project.title}
                   className="w-full h-full object-cover"
+                  loading="lazy" 
+                  decoding="async"
                 />
               </div>
 
@@ -122,9 +125,18 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, isOpen, onC
                   <h3 className="text-lg font-bold font-space-grotesk text-white mb-2">
                     Solution
                   </h3>
-                  <p className="text-secondary leading-relaxed">
+                  <p className="text-secondary leading-relaxed mb-6">
                     {getSolutionStatement(project.id)}
                   </p>
+                  
+                  {['neofin', 'indiamart'].includes(project.id) && (
+                    <div className="mt-4 mb-8">
+                      <h3 className="text-lg font-bold font-space-grotesk text-white mb-3">
+                        System Architecture
+                      </h3>
+                      <ArchitectureDiagram projectId={project.id} />
+                    </div>
+                  )}
                 </div>
 
                 {/* Tech Stack */}

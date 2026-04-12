@@ -1,131 +1,84 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 export const CharacterModel: React.FC = () => {
-  const { scene, animations } = useGLTF('/models/character.glb');
-  const { actions } = useAnimations(animations, scene);
+  // Load the specific GLB file the user requested
+  const { scene, animations } = useGLTF('/models/nexbot_robot_character_concept.glb');
+  const { actions, mixer } = useAnimations(animations, scene);
   const meshRef = useRef<THREE.Group>(null);
-  const headBoneRef = useRef<THREE.Bone>(null);
   const { mouse } = useThree();
-  const [isHovered, setIsHovered] = useState(false);
 
-  // Find head bone
+  // Basic setup to ensure materials look good
   useEffect(() => {
     if (scene) {
       scene.traverse((child) => {
-        if (child.name.toLowerCase().includes('head') && child instanceof THREE.Bone) {
-          headBoneRef.current = child;
+        if ((child as THREE.Mesh).isMesh) {
+          const mesh = child as THREE.Mesh;
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+          if (mesh.material) {
+            const mat = mesh.material as THREE.MeshStandardMaterial;
+            if (mat.isMeshStandardMaterial) {
+              mat.envMapIntensity = 1.5;
+            }
+          }
         }
       });
+      // Optionally center the model automatically
+      const box = new THREE.Box3().setFromObject(scene);
+      const center = box.getCenter(new THREE.Vector3());
+      scene.position.x += (scene.position.x - center.x);
+      scene.position.y += (scene.position.y - center.y);
+      scene.position.z += (scene.position.z - center.z);
     }
   }, [scene]);
 
-  // Play animations on load
+  // Attempt to play the first available animation if any exist
   useEffect(() => {
-    if (actions) {
-      // Play intro animation once
-      const introAction = actions['introAnimation'];
-      if (introAction) {
-        introAction.reset().play();
-        introAction.clampWhenFinished = true;
-      }
-
-      // Loop blink animation
-      const blinkAction = actions['Blink'];
-      if (blinkAction) {
-        blinkAction.reset().play();
+    if (actions && Object.keys(actions).length > 0) {
+      const firstActionKey = Object.keys(actions)[0];
+      const action = actions[firstActionKey];
+      if (action) {
+        action.reset().play();
       }
     }
   }, [actions]);
 
-  // Handle mouse hover
-  useEffect(() => {
-    const handleMouseMove = (event: MouseEvent) => {
-      const characterElement = document.querySelector('.character-container');
-      if (characterElement) {
-        const rect = characterElement.getBoundingClientRect();
-        const isOver =
-          event.clientX >= rect.left &&
-          event.clientX <= rect.right &&
-          event.clientY >= rect.top &&
-          event.clientY <= rect.bottom;
-        setIsHovered(isOver);
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  // Play browup on hover
-  useEffect(() => {
-    if (actions) {
-      if (isHovered) {
-        const browupAction = actions['browup'];
-        if (browupAction) {
-          browupAction.reset().play();
-        }
-      }
-    }
-  }, [isHovered, actions]);
-
-  useFrame(() => {
+  // Subtle floating and mouse tracking
+  useFrame((state) => {
     if (meshRef.current) {
-      // Mouse parallax on body
+      // Smooth mouse-follow rotation
+      const targetRotY = mouse.x * 0.4;
+      const targetRotX = -mouse.y * 0.15;
+
       meshRef.current.rotation.y = THREE.MathUtils.lerp(
         meshRef.current.rotation.y,
-        mouse.x * 0.3,
+        targetRotY,
         0.05
       );
       meshRef.current.rotation.x = THREE.MathUtils.lerp(
         meshRef.current.rotation.x,
-        -mouse.y * 0.1,
+        targetRotX,
         0.05
       );
 
-      // Scroll-based head rotation
-      if (headBoneRef.current) {
-        const scrollY = window.scrollY;
-        const maxScroll = document.body.scrollHeight - window.innerHeight;
-        const scrollPercent = scrollY / maxScroll;
-        headBoneRef.current.rotation.y = THREE.MathUtils.lerp(
-          headBoneRef.current.rotation.y,
-          scrollPercent * Math.PI * 0.5,
-          0.05
-        );
-      }
+      // Subtle floating float animation
+      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 1.5) * 0.05;
+    }
+
+    if (mixer) {
+      mixer.update(state.clock.getDelta());
     }
   });
 
-  // Set typing animation when About section is in view
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && actions) {
-          const typingAction = actions['typing'];
-          if (typingAction) {
-            typingAction.reset().play();
-          }
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    const aboutSection = document.querySelector('#about');
-    if (aboutSection) {
-      observer.observe(aboutSection);
-    }
-
-    return () => observer.disconnect();
-  }, [actions]);
-
   return (
     <group ref={meshRef} dispose={null}>
-      <primitive object={scene.clone()} scale={1.5} position={[0, -1, 0]} />
+      {/* Adjust scale to fit the screen; may need tweaking based on the GLB's native size */}
+      <primitive object={scene} scale={2} position={[0, -1, 0]} />
     </group>
   );
 };
 
-useGLTF.preload('/models/character.glb');
+useGLTF.preload('/models/nexbot_robot_character_concept.glb');

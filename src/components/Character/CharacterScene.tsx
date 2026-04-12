@@ -1,88 +1,36 @@
-import React, { Suspense } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
-import { CharacterModel } from './CharacterModel';
-import { Particles } from './Particles';
+import React, { useEffect } from 'react';
+import Spline from '@splinetool/react-spline';
 
-interface CharacterSceneProps {
-  showParticles?: boolean;
-  particleCount?: number;
-}
+export const CharacterScene: React.FC = () => {
+  useEffect(() => {
+    // Continuously try to remove the watermark from the shadow DOM
+    const removeWatermark = () => {
+      const viewer = document.querySelector('spline-viewer');
+      if (viewer && viewer.shadowRoot) {
+        const logo = viewer.shadowRoot.querySelector('#logo');
+        if (logo) {
+          logo.remove();
+        }
+      }
+    };
+    
+    // Check multiple times as it loads
+    const intervalId = setInterval(removeWatermark, 500);
+    setTimeout(() => clearInterval(intervalId), 10000);
+    return () => clearInterval(intervalId);
+  }, []);
 
-export const CharacterScene: React.FC<CharacterSceneProps> = ({
-  showParticles = true,
-  particleCount = 15000,
-}) => {
   return (
-    <Canvas
-      className="character-container"
-      camera={{ position: [0, 0, 5], fov: 45 }}
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-      }}
-      gl={{ antialias: true, alpha: true }}
-      frameloop="demand"
-      data-cursor="character"
+    <div
+      className="absolute inset-0 z-[2] flex items-center justify-center max-md:pointer-events-none pointer-events-auto"
     >
-      <Suspense fallback={null}>
-        <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={45} />
-
-        {/* Lighting */}
-        <ambientLight intensity={0.2} />
-        <spotLight
-          position={[10, 10, 10]}
-          angle={0.3}
-          penumbra={1}
-          intensity={100}
-          castShadow
-        />
-        <spotLight
-          position={[-10, 5, 3]}
-          angle={0.3}
-          penumbra={1}
-          intensity={50}
-          color="#3B82F6"
-        />
-        <spotLight
-          position={[0, 5, 3]}
-          angle={0.3}
-          penumbra={1}
-          intensity={100}
-          color="#8B5CF6"
-        />
-
-        {/* Environment */}
-        <Environment preset="night" />
-
-        {/* Character */}
-        <CharacterModel />
-
-        {/* Particles */}
-        {showParticles && <Particles count={particleCount} />}
-
-        {/* Post-processing */}
-        <EffectComposer enableNormalPass={false}>
-          <Bloom
-            intensity={0.3}
-            luminanceThreshold={0.8}
-            mipmapBlur
-          />
-        </EffectComposer>
-
-        {/* Controls */}
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          rotateSpeed={0.5}
-          minPolarAngle={Math.PI / 3}
-          maxPolarAngle={Math.PI / 2}
-        />
-      </Suspense>
-    </Canvas>
+      <Spline
+        scene="https://prod.spline.design/9AC1QFiaRuUHJ3rB/scene.splinecode"
+        style={{ 
+          width: '100%', 
+          height: '100%',
+        }}
+      />
+    </div>
   );
 };

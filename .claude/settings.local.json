@@ -10,7 +10,9 @@
       "Bash(./node_modules/.bin/tailwindcss init:*)",
       "Bash(npm run:*)",
       "Bash(curl -s http://localhost:5174)",
-      "Bash(ls -la .env*)"
+      "Bash(ls -la .env*)",
+      "Bash(dir:*)",
+      "Bash(curl -s http://localhost:5173)"
     ]
   }
 }

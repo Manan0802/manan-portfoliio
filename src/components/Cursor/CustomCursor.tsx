@@ -25,7 +25,7 @@ export const CustomCursor: React.FC = () => {
   return (
     <>
       <div
-        className="custom-cursor"
+        className="custom-cursor hidden md:block"
         style={{
           left: cursor.x,
           top: cursor.y,

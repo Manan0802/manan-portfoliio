@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# AI Tools
+.claude/
+.gemini/
+report.json
+
+# Test Artifacts
+test_playwright.cjs
+test_playwright.js
+playwright-report/
+test-results/
+
