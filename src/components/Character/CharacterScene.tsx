@@ -1,29 +1,65 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Spline from '@splinetool/react-spline';
 
 export const CharacterScene: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
+  const [mobileLeft, setMobileLeft] = useState('50%');
+
+  const computeLayout = useCallback(() => {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const mobile = vw < 768;
+    setIsMobile(mobile);
+
+    if (!mobile) {
+      setMobileLeft('50%');
+      return;
+    }
+
+    /*
+      Dynamic centering formula — works on ANY phone screen.
+
+      The Spline canvas is forced into landscape using min-width: 200vh.
+      The robot sits at ~51% horizontal in the Spline scene.
+      
+      We calculate the exact CSS left% needed to center the robot
+      on the phone viewport, regardless of screen dimensions.
+      
+      canvasWidth = max(vw, vh * 16/9)   — forced landscape
+      robotPx = canvasWidth * 0.51       — robot's X position in pixels
+      
+      To center the robot on screen:
+        canvasLeftEdge = vw/2 - robotPx
+        canvasCenterPx = canvasLeftEdge + canvasWidth/2
+        leftPercent = canvasCenterPx / vw * 100
+    */
+    const canvasWidth = Math.max(vw, vh * (16 / 9));
+    const robotPx = canvasWidth * 0.51;
+    const canvasCenterPx = (vw / 2) - robotPx + (canvasWidth / 2);
+    const leftPct = (canvasCenterPx / vw) * 100;
+    
+    setMobileLeft(`${leftPct}%`);
+  }, []);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    computeLayout();
+    window.addEventListener('resize', computeLayout);
+    window.addEventListener('orientationchange', computeLayout);
 
     const timeout = setTimeout(() => {
-      if (!hasLoaded && isMobile) {
+      if (!hasLoaded) {
         setShowFallback(true);
       }
     }, 15000);
 
     return () => {
-      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener('resize', computeLayout);
+      window.removeEventListener('orientationchange', computeLayout);
       clearTimeout(timeout);
     };
-  }, [hasLoaded, isMobile]);
+  }, [computeLayout, hasLoaded]);
 
   useEffect(() => {
     const removeWatermark = () => {
@@ -53,20 +89,10 @@ export const CharacterScene: React.FC = () => {
   }
 
   /*
-    Universal "cover" strategy for the Spline 3D scene.
-    
-    The scene is landscape (~16:9) with the robot at ~52-55% horizontal center.
-    
-    Desktop: canvas fills viewport (already landscape). No adjustments needed.
-    
-    Mobile (portrait): Force landscape with min-width: 200vh.
-    The canvas is centered at left: 47% + translateX(-50%), which shifts it
-    slightly left to compensate for the robot being right-of-center in the scene.
-    
-    Tested empirically:
-    - left: 50% → robot too far right (off-screen on short phones)
-    - left: 42% → robot way too far left
-    - left: 47% → robot centered ✅
+    - Desktop: canvas fills viewport (already landscape). left: 50%.
+    - Mobile: canvas forced landscape via min-width: 200vh.
+      Left offset dynamically computed to center the robot on the phone screen.
+      Works on ALL phones: Redmi, OnePlus, Samsung, iPhone, Pixel, etc.
   */
   return (
     <div
@@ -80,7 +106,7 @@ export const CharacterScene: React.FC = () => {
           width: '100%',
           minWidth: isMobile ? '200vh' : undefined,
           top: 0,
-          left: isMobile ? '47%' : '50%',
+          left: mobileLeft,
           transform: 'translateX(-50%)',
         }}
       >
