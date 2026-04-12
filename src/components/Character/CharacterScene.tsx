@@ -17,7 +17,7 @@ export const CharacterScene: React.FC = () => {
       if (!hasLoaded && isMobile) {
         setShowFallback(true);
       }
-    }, 12000);
+    }, 15000);
 
     return () => {
       window.removeEventListener('resize', checkMobile);
@@ -53,47 +53,43 @@ export const CharacterScene: React.FC = () => {
   }
 
   /*
-    The Spline scene is landscape (~16:9) with robot at center and "MANAN" text behind.
-    On a portrait phone, only the far-left is visible.
+    Universal "cover" strategy for the Spline 3D scene.
     
-    Mobile fix: Force the Spline canvas into a landscape aspect ratio (100vw × 56vw = 16:9)
-    and center it vertically within the hero. This preserves the scene's intended framing
-    while keeping the robot centered on screen.
+    The scene is landscape (~16:9) with the robot at ~52-55% horizontal center.
+    
+    Desktop: canvas fills viewport (already landscape). No adjustments needed.
+    
+    Mobile (portrait): Force landscape with min-width: 200vh.
+    The canvas is centered at left: 47% + translateX(-50%), which shifts it
+    slightly left to compensate for the robot being right-of-center in the scene.
+    
+    Tested empirically:
+    - left: 50% → robot too far right (off-screen on short phones)
+    - left: 42% → robot way too far left
+    - left: 47% → robot centered ✅
   */
-  if (isMobile) {
-    return (
-      <div
-        className="absolute inset-0 z-[2] flex items-center justify-center overflow-hidden"
-        style={{ pointerEvents: 'none' }}
-      >
-        <div
-          style={{
-            width: '300vw',
-            height: '168.75vw', /* 300 * 9/16 = landscape ratio */
-            flexShrink: 0,
-          }}
-        >
-          <Spline
-            scene="https://prod.spline.design/9AC1QFiaRuUHJ3rB/scene.splinecode"
-            onLoad={() => setHasLoaded(true)}
-            style={{ width: '100%', height: '100%' }}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // Desktop — full viewport, interactive
   return (
     <div
-      className="absolute inset-0 z-[2]"
-      style={{ pointerEvents: 'auto' }}
+      className="absolute inset-0 z-[2] overflow-hidden"
+      style={{ pointerEvents: isMobile ? 'none' : 'auto' }}
     >
-      <Spline
-        scene="https://prod.spline.design/9AC1QFiaRuUHJ3rB/scene.splinecode"
-        onLoad={() => setHasLoaded(true)}
-        style={{ width: '100%', height: '100%' }}
-      />
+      <div
+        style={{
+          position: 'absolute',
+          height: '100%',
+          width: '100%',
+          minWidth: isMobile ? '200vh' : undefined,
+          top: 0,
+          left: isMobile ? '47%' : '50%',
+          transform: 'translateX(-50%)',
+        }}
+      >
+        <Spline
+          scene="https://prod.spline.design/9AC1QFiaRuUHJ3rB/scene.splinecode"
+          onLoad={() => setHasLoaded(true)}
+          style={{ width: '100%', height: '100%' }}
+        />
+      </div>
     </div>
   );
 };
