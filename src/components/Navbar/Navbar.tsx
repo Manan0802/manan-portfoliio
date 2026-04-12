@@ -136,15 +136,15 @@ export const Navbar: React.FC = () => {
           </button>
         </div>
 
-        {/* Mobile Navigation — Always visible compact row like Shubham's site */}
-        <div className="md:hidden flex items-center justify-center gap-1 mt-2 pb-1 overflow-x-auto scrollbar-hide">
+        {/* Mobile Navigation — Always visible compact row */}
+        <div className="md:hidden flex items-center justify-center flex-wrap gap-1 mt-2 pb-1 px-1">
           {navLinks.map((link) => {
             const isActive = activePath === link.path;
             return (
               <Link
                 key={link.name}
                 to={link.path}
-                className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider rounded-full whitespace-nowrap transition-all duration-300 min-h-[32px] flex items-center"
+                className="px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide rounded-full whitespace-nowrap transition-all duration-300 min-h-[28px] flex items-center"
                 style={{
                   color: isActive ? '#ffffff' : 'rgba(255,255,255,0.5)',
                   background: isActive ? 'rgba(59, 130, 246, 0.2)' : 'transparent',

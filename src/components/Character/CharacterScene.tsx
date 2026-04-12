@@ -13,12 +13,11 @@ export const CharacterScene: React.FC = () => {
     checkMobile();
     window.addEventListener('resize', checkMobile);
 
-    // If Spline doesn't load in 10s on mobile, show gradient fallback
     const timeout = setTimeout(() => {
       if (!hasLoaded && isMobile) {
         setShowFallback(true);
       }
-    }, 10000);
+    }, 12000);
 
     return () => {
       window.removeEventListener('resize', checkMobile);
@@ -27,7 +26,6 @@ export const CharacterScene: React.FC = () => {
   }, [hasLoaded, isMobile]);
 
   useEffect(() => {
-    // Remove Spline watermark
     const removeWatermark = () => {
       const viewer = document.querySelector('spline-viewer');
       if (viewer && viewer.shadowRoot) {
@@ -35,7 +33,6 @@ export const CharacterScene: React.FC = () => {
         if (logo) logo.remove();
       }
     };
-    
     const intervalId = setInterval(removeWatermark, 500);
     setTimeout(() => clearInterval(intervalId), 10000);
     return () => clearInterval(intervalId);
@@ -55,21 +52,47 @@ export const CharacterScene: React.FC = () => {
     );
   }
 
+  /*
+    The Spline scene is landscape (~16:9) with robot at center and "MANAN" text behind.
+    On a portrait phone, only the far-left is visible.
+    
+    Mobile fix: Force the Spline canvas into a landscape aspect ratio (100vw × 56vw = 16:9)
+    and center it vertically within the hero. This preserves the scene's intended framing
+    while keeping the robot centered on screen.
+  */
+  if (isMobile) {
+    return (
+      <div
+        className="absolute inset-0 z-[2] flex items-center justify-center overflow-hidden"
+        style={{ pointerEvents: 'none' }}
+      >
+        <div
+          style={{
+            width: '300vw',
+            height: '168.75vw', /* 300 * 9/16 = landscape ratio */
+            flexShrink: 0,
+          }}
+        >
+          <Spline
+            scene="https://prod.spline.design/9AC1QFiaRuUHJ3rB/scene.splinecode"
+            onLoad={() => setHasLoaded(true)}
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop — full viewport, interactive
   return (
     <div
       className="absolute inset-0 z-[2]"
-      style={{
-        // On mobile: no pointer events to avoid scroll hijack, but keep the model FULL SIZE
-        pointerEvents: isMobile ? 'none' : 'auto',
-      }}
+      style={{ pointerEvents: 'auto' }}
     >
       <Spline
         scene="https://prod.spline.design/9AC1QFiaRuUHJ3rB/scene.splinecode"
         onLoad={() => setHasLoaded(true)}
-        style={{ 
-          width: '100%', 
-          height: '100%',
-        }}
+        style={{ width: '100%', height: '100%' }}
       />
     </div>
   );
