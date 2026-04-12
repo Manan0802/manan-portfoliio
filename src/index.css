@@ -302,46 +302,14 @@ a[href*="spline.design"] {
   .character-container {
     max-height: 80vh;
   }
-
-  #hero h1 {
-    font-size: clamp(60px, 12vw, 150px) !important;
-  }
 }
 
 /* Mobile (max-width: 768px) */
 @media (max-width: 768px) {
-  h1 {
-    font-size: 2rem !important;
-  }
-
-  h2 {
-    font-size: 1.75rem !important;
-  }
-
-  h3 {
-    font-size: 1.25rem !important;
-  }
-
-  p {
-    font-size: 0.95rem;
-  }
-
-  /* Scale down 3D scene on mobile for performance but keep it visible */
-  .character-container {
-    max-height: 60vh;
-    opacity: 0.7;
-  }
-
-  /* Hero adjustments */
+  /* Hero — keep full impact on mobile, just adjust spacing */
   #hero {
-    height: auto !important;
-    min-height: 100vh;
-    padding: 120px 20px 60px;
-  }
-
-  #hero h1 {
-    font-size: clamp(48px, 10vw, 80px) !important;
-    opacity: 0.15 !important;
+    min-height: 100dvh;
+    padding-top: 80px;
   }
 
   /* Service flip cards - disable flip on mobile, show front only */
@@ -374,14 +342,6 @@ a[href*="spline.design"] {
 
 /* Small mobile (max-width: 480px) */
 @media (max-width: 480px) {
-  h1 {
-    font-size: 1.75rem !important;
-  }
-
-  h2 {
-    font-size: 1.5rem !important;
-  }
-
   .glow-button {
     width: 100% !important;
     justify-content: center !important;

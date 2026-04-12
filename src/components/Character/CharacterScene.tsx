@@ -7,19 +7,18 @@ export const CharacterScene: React.FC = () => {
   const [showFallback, setShowFallback] = useState(false);
 
   useEffect(() => {
-    // Detect mobile/low-power devices
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+      setIsMobile(window.innerWidth < 768);
     };
     checkMobile();
     window.addEventListener('resize', checkMobile);
 
-    // Fallback timeout — if Spline doesn't load in 8s on mobile, show static fallback
+    // If Spline doesn't load in 10s on mobile, show gradient fallback
     const timeout = setTimeout(() => {
       if (!hasLoaded && isMobile) {
         setShowFallback(true);
       }
-    }, 8000);
+    }, 10000);
 
     return () => {
       window.removeEventListener('resize', checkMobile);
@@ -28,14 +27,12 @@ export const CharacterScene: React.FC = () => {
   }, [hasLoaded, isMobile]);
 
   useEffect(() => {
-    // Continuously try to remove the watermark from the shadow DOM
+    // Remove Spline watermark
     const removeWatermark = () => {
       const viewer = document.querySelector('spline-viewer');
       if (viewer && viewer.shadowRoot) {
         const logo = viewer.shadowRoot.querySelector('#logo');
-        if (logo) {
-          logo.remove();
-        }
+        if (logo) logo.remove();
       }
     };
     
@@ -44,14 +41,13 @@ export const CharacterScene: React.FC = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Static gradient fallback for when 3D can't load
   if (showFallback) {
     return (
       <div className="absolute inset-0 z-[2] flex items-center justify-center">
-        <div className="w-[300px] h-[300px] md:w-[500px] md:h-[500px] rounded-full opacity-30"
+        <div className="w-[80vw] h-[80vw] max-w-[500px] max-h-[500px] rounded-full"
           style={{
-            background: 'radial-gradient(circle, rgba(59,130,246,0.3) 0%, rgba(139,92,246,0.1) 50%, transparent 70%)',
-            filter: 'blur(40px)',
+            background: 'radial-gradient(circle, rgba(59,130,246,0.2) 0%, rgba(139,92,246,0.1) 50%, transparent 70%)',
+            filter: 'blur(60px)',
             animation: 'pulse 4s ease-in-out infinite',
           }}
         />
@@ -61,12 +57,10 @@ export const CharacterScene: React.FC = () => {
 
   return (
     <div
-      className="absolute inset-0 z-[2] flex items-center justify-center"
+      className="absolute inset-0 z-[2]"
       style={{
-        // On mobile: disable pointer events to prevent scroll-hijack, scale down slightly
+        // On mobile: no pointer events to avoid scroll hijack, but keep the model FULL SIZE
         pointerEvents: isMobile ? 'none' : 'auto',
-        transform: isMobile ? 'scale(0.85)' : 'scale(1)',
-        transformOrigin: 'center center',
       }}
     >
       <Spline
