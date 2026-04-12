@@ -57,7 +57,7 @@ export const Hero: React.FC = () => {
     <section
       id="hero"
       className="relative w-full flex flex-col justify-end"
-      style={{ height: '100vh', minHeight: '800px', background: '#000000' }}
+      style={{ height: '100dvh', minHeight: '600px', background: '#000000' }}
     >
       {/* Spline 3D Scene - Lazy loaded for Performance */}
       <Suspense 

@@ -69,10 +69,11 @@ export const Contact: React.FC = () => {
       <div className="absolute inset-0 pointer-events-none">
         <Canvas
           camera={{ position: [0, 0, 5], fov: 45 }}
-          gl={{ antialias: true, alpha: true }}
-          frameloop="always"
+          gl={{ antialias: false, alpha: true, powerPreference: 'low-power' }}
+          frameloop="demand"
+          dpr={[1, 1.5]}
         >
-          <Particles count={5000} />
+          <Particles count={800} />
         </Canvas>
       </div>
 
@@ -189,11 +190,12 @@ export const Contact: React.FC = () => {
                     name="type"
                     value={formData.type}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary transition-colors"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white focus:outline-none focus:border-primary transition-colors appearance-none"
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239CA3AF' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 16px center' }}
                   >
-                    <option value="Looking to Hire">Looking to Hire</option>
-                    <option value="Freelance Project">Freelance Project</option>
-                    <option value="Collaboration">Collaboration</option>
+                    <option value="Looking to Hire" style={{ background: '#111', color: '#fff' }}>Looking to Hire</option>
+                    <option value="Freelance Project" style={{ background: '#111', color: '#fff' }}>Freelance Project</option>
+                    <option value="Collaboration" style={{ background: '#111', color: '#fff' }}>Collaboration</option>
                   </select>
                 </div>
 

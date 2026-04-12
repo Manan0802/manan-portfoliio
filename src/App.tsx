@@ -43,10 +43,18 @@ class ErrorBoundary extends React.Component<
 function AppContent() {
   const { isLoading, completeLoading } = useLoading();
 
-  // Initialize Lenis smooth scroll
+  // Initialize Lenis smooth scroll (desktop only — mobile native scroll is smoother)
   useEffect(() => {
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    // Skip Lenis on mobile — native scroll is faster and smoother on phones
+    if (isTouchDevice) {
+      completeLoading();
+      return;
+    }
+
     const lenisInstance = new Lenis({
-      duration: 1.2,
+      duration: 1.0,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     });
 
