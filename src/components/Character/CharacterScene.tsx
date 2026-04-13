@@ -1,11 +1,54 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Spline from '@splinetool/react-spline';
 
+/*
+  EMPIRICALLY CALIBRATED — 160vh CANVAS
+  ──────────────────────────────────────
+  
+  Uses 160vh min-width (instead of 200vh) so MORE of the MANAN name
+  is visible on mobile while still keeping the robot in frame.
+  
+  Robot position measured at left:50% baseline using Puppeteer:
+    canvas 1067 px (iPhone SE)       →  robot at 64.0 %
+    canvas 1248 px (Redmi 9A)        →  robot at 55.8 %
+    canvas 1397 px (Redmi 13 Pro)    →  robot at 52.8 %
+    canvas 1491 px (iPhone 14 PM)    →  robot at 50.6 %
+  
+  Piecewise-linear interpolation centers the robot on ANY screen.
+*/
+
+// Anchor points:  [canvasWidth, robotFactor]
+// Canvas width = 1.6 × viewport height
+const ANCHORS: [number, number][] = [
+  [ 909, 0.715],   // iPhone 5/SE1    320×568, canvas = 1.6×568  (extrapolated)
+  [1045, 0.660],   // Galaxy Fold     280×653, canvas = 1.6×653  (extrapolated)
+  [1067, 0.655],   // iPhone SE       375×667  (R1: robot at 55%, +0.015)
+  [1248, 0.573],   // Redmi 9A        360×780  (R1: robot at 55%, +0.015)
+  [1397, 0.536],   // Redmi 13 Pro    393×873  (R1: robot at 52%, +0.008)
+  [1491, 0.506],   // iPhone 14 PM    430×932  (R1: robot at 50%, perfect)
+];
+
+/** Piecewise linear interpolation between anchor points */
+function getRobotFactor(canvasWidth: number): number {
+  if (canvasWidth <= ANCHORS[0][0]) return ANCHORS[0][1];
+  if (canvasWidth >= ANCHORS[ANCHORS.length - 1][0]) return ANCHORS[ANCHORS.length - 1][1];
+
+  for (let i = 0; i < ANCHORS.length - 1; i++) {
+    const [w0, f0] = ANCHORS[i];
+    const [w1, f1] = ANCHORS[i + 1];
+    if (canvasWidth >= w0 && canvasWidth <= w1) {
+      const t = (canvasWidth - w0) / (w1 - w0);
+      return f0 + t * (f1 - f0);
+    }
+  }
+  return 0.55; // fallback
+}
+
 export const CharacterScene: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [showFallback, setShowFallback] = useState(false);
-  const [mobileLeft, setMobileLeft] = useState('50%');
+  const [canvasStyle, setCanvasStyle] = useState<React.CSSProperties>({});
 
   const computeLayout = useCallback(() => {
     const vw = window.innerWidth;
@@ -14,33 +57,35 @@ export const CharacterScene: React.FC = () => {
     setIsMobile(mobile);
 
     if (!mobile) {
-      setMobileLeft('50%');
+      setCanvasStyle({
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        top: 0,
+        left: '50%',
+        transform: 'translateX(-50%)',
+      });
       return;
     }
 
-    /*
-      Dynamic centering formula — works on ANY phone screen.
-
-      The Spline canvas is forced into landscape using min-width: 200vh.
-      The robot sits at ~51% horizontal in the Spline scene.
-      
-      We calculate the exact CSS left% needed to center the robot
-      on the phone viewport, regardless of screen dimensions.
-      
-      canvasWidth = max(vw, vh * 16/9)   — forced landscape
-      robotPx = canvasWidth * 0.51       — robot's X position in pixels
-      
-      To center the robot on screen:
-        canvasLeftEdge = vw/2 - robotPx
-        canvasCenterPx = canvasLeftEdge + canvasWidth/2
-        leftPercent = canvasCenterPx / vw * 100
-    */
-    const canvasWidth = Math.max(vw, vh * (16 / 9));
-    const robotPx = canvasWidth * 0.51;
+    // Canvas width = CSS min-width: 160vh = 1.6 × vh
+    const canvasWidth = Math.max(vw, vh * 1.6);
+    const robotFactor = getRobotFactor(canvasWidth);
+    
+    // Centre the robot on the viewport
+    const robotPx = canvasWidth * robotFactor;
     const canvasCenterPx = (vw / 2) - robotPx + (canvasWidth / 2);
     const leftPct = (canvasCenterPx / vw) * 100;
-    
-    setMobileLeft(`${leftPct}%`);
+
+    setCanvasStyle({
+      position: 'absolute',
+      height: '100%',
+      width: '100%',
+      minWidth: '160vh',
+      top: 0,
+      left: `${leftPct}%`,
+      transform: 'translateX(-50%)',
+    });
   }, []);
 
   useEffect(() => {
@@ -49,9 +94,7 @@ export const CharacterScene: React.FC = () => {
     window.addEventListener('orientationchange', computeLayout);
 
     const timeout = setTimeout(() => {
-      if (!hasLoaded) {
-        setShowFallback(true);
-      }
+      if (!hasLoaded) setShowFallback(true);
     }, 15000);
 
     return () => {
@@ -88,28 +131,12 @@ export const CharacterScene: React.FC = () => {
     );
   }
 
-  /*
-    - Desktop: canvas fills viewport (already landscape). left: 50%.
-    - Mobile: canvas forced landscape via min-width: 200vh.
-      Left offset dynamically computed to center the robot on the phone screen.
-      Works on ALL phones: Redmi, OnePlus, Samsung, iPhone, Pixel, etc.
-  */
   return (
     <div
       className="absolute inset-0 z-[2] overflow-hidden"
       style={{ pointerEvents: isMobile ? 'none' : 'auto' }}
     >
-      <div
-        style={{
-          position: 'absolute',
-          height: '100%',
-          width: '100%',
-          minWidth: isMobile ? '200vh' : undefined,
-          top: 0,
-          left: mobileLeft,
-          transform: 'translateX(-50%)',
-        }}
-      >
+      <div style={canvasStyle}>
         <Spline
           scene="https://prod.spline.design/9AC1QFiaRuUHJ3rB/scene.splinecode"
           onLoad={() => setHasLoaded(true)}
