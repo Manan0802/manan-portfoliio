@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { FiGithub, FiLinkedin, FiMail, FiCode, FiArrowRight } from 'react-icons/fi';
+import { FiGithub, FiLinkedin, FiMail, FiCode, FiArrowRight, FiArrowUp } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 const socialLinks = [
   { icon: <FiGithub />, label: 'GitHub', href: 'https://github.com/Manan0802' },
@@ -12,6 +13,18 @@ export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+
+  const navLinks = [
+    { name: 'Home', path: '/' },
+    { name: 'Experience', path: '/experience' },
+    { name: 'Projects', path: '/projects' },
+    { name: 'Services', path: '/services' },
+    { name: 'Contact', path: '/contact' }
+  ];
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,6 +72,31 @@ export const Footer: React.FC = () => {
               </button>
             </form>
           )}
+        </div>
+
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10 pb-10 border-b border-white/5">
+          <div className="flex flex-wrap justify-center md:justify-start gap-6 text-sm font-medium">
+            {navLinks.map((item) => (
+              <Link 
+                key={item.name} 
+                to={item.path} 
+                onClick={scrollToTop}
+                className="text-secondary hover:text-primary transition-colors"
+                data-cursor="hover"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
+
+          <button 
+            onClick={scrollToTop}
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors text-sm font-bold border border-white/10 group"
+            data-cursor="hover"
+            aria-label="Back to top"
+          >
+            Back to Top <FiArrowUp className="group-hover:-translate-y-1 transition-transform" />
+          </button>
         </div>
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">

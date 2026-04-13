@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { LoadingProvider, useLoading } from './context/LoadingContext';
 import { Loader } from './components/Loader/Loader';
 import { CustomCursor } from './components/Cursor/CustomCursor';
@@ -43,6 +43,12 @@ class ErrorBoundary extends React.Component<
 
 function AppContent() {
   const { isLoading, completeLoading } = useLoading();
+  const { pathname } = useLocation();
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [pathname]);
 
   // Initialize Lenis smooth scroll (desktop only — mobile native scroll is smoother)
   useEffect(() => {
