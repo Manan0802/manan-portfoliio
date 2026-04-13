@@ -1,182 +1,100 @@
 import React, { useEffect, useState } from 'react';
 import { useLoading } from '../../context/LoadingContext';
+import { FiCpu, FiZap, FiCode } from 'react-icons/fi';
 import './Loader.css';
-
-const bootLogs = [
-  'KERNEL: Initializing core systems...',
-  'NEURAL: Loading AI inference models...',
-  'MEMORY: Allocating 64TB unified memory...',
-  'GPU: Warming up tensor cores...',
-  'SYSTEM: Bypassing security protocols...',
-  'UI: Constructing DOM structures...',
-  'MATRIX: Rendering 3D environment...',
-  'STATUS: ALL SYSTEMS NOMINAL',
-];
-
-const scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-
-// Text Scrambler Component
-const ScrambleText = ({ text, delay = 0, isReady = false }: { text: string; delay?: number; isReady?: boolean }) => {
-  const [displayText, setDisplayText] = useState('');
-  const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    let timeout: ReturnType<typeof setTimeout>;
-    if (isReady) {
-      timeout = setTimeout(() => setStarted(true), delay);
-    }
-    return () => clearTimeout(timeout);
-  }, [isReady, delay]);
-
-  useEffect(() => {
-    if (!started) return;
-    
-    let iterations = 0;
-    
-    const interval = setInterval(() => {
-      setDisplayText(
-        text
-          .split('')
-          .map((char, i) => {
-            if (char === ' ') return ' ';
-            if (i < iterations) return text[i];
-            return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
-          })
-          .join('')
-      );
-      
-      if (iterations >= text.length) {
-        clearInterval(interval);
-      }
-      
-      iterations += 1/3;
-    }, 30);
-    
-    return () => clearInterval(interval);
-  }, [text, started]);
-
-  return <span>{started ? displayText : ''.padEnd(text.length, '_')}</span>;
-};
-
 
 export const Loader: React.FC = () => {
   const { setProgress, completeLoading } = useLoading();
   const [displayPercentage, setDisplayPercentage] = useState(0);
-  const [phase, setPhase] = useState<'loading' | 'reveal' | 'ready' | 'exit'>('loading');
-  const [currentLogIndex, setCurrentLogIndex] = useState(0);
+  const [phase, setPhase] = useState<'loading' | 'reveal' | 'exit'>('loading');
 
   // Simulated progress
   useEffect(() => {
     const startTime = Date.now();
-    const totalDuration = 3500; // slightly longer for dramatic effect
+    const totalDuration = 2500; // Faster, modern
 
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const rawProgress = Math.min(100, (elapsed / totalDuration) * 100);
       
-      // Custom easing function (easeOutExpo)
       const eased = rawProgress === 100 ? 1 : 1 - Math.pow(2, -10 * rawProgress / 100);
       const displayValue = Math.floor(eased * 100);
 
       setProgress(displayValue);
       setDisplayPercentage(displayValue);
 
-        if (rawProgress < 100) {
+      if (rawProgress < 100) {
         requestAnimationFrame(animate);
       } else {
         setPhase('reveal');
-        setTimeout(() => setPhase('ready'), 200);
-        setTimeout(() => {
-          setPhase('exit');
-          setTimeout(() => completeLoading(), 1000); // Wait for fade-out animation
-        }, 2000);
+        setTimeout(() => setPhase('exit'), 800);
+        setTimeout(() => completeLoading(), 1600); // Wait for fade-out animation
       }
     };
 
     requestAnimationFrame(animate);
   }, [setProgress, completeLoading]);
 
-  // Cycle boot logs quickly
-  useEffect(() => {
-    if (phase !== 'loading') return;
-    const interval = setInterval(() => {
-      setCurrentLogIndex((prev) => Math.min(prev + 1, bootLogs.length - 1));
-    }, 350);
-    return () => clearInterval(interval);
-  }, [phase]);
-
   return (
-    <div className={`loader-container ${phase === 'exit' ? 'pointer-events-none' : ''}`}>
-      {/* Main UI Overlay - Fades out entirely on exit */}
-      <div className={`loader-ui ${phase === 'exit' ? 'fade-out' : ''}`}>
-        
-        {/* Animated grid background */}
-        <div className="loader-grid" />
-        <div className="loader-scanline" />
+    <div className={`fixed inset-0 z-[10000] flex flex-col items-center justify-center transition-all duration-700 bg-[#030712] ${phase === 'exit' ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'}`}>
+      
+      {/* Ambient Orbs matching Services page */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[150px] animate-pulse" style={{ animationDelay: '2s' }} />
+      </div>
 
-        {/* Ambient Glows */}
-        <div className="loader-ambient-orb orb-primary" />
-        <div className="loader-ambient-orb orb-secondary" />
-
-        {/* Central HUD Element */}
-        <div className="loader-hud-core">
-          {/* Rotating Rings */}
-          <div className="loader-ring ring-outer" />
-          <div className="loader-ring ring-inner" />
-          <div className="loader-ring ring-dashed" />
-          
-          {/* Center Content */}
-          <div className="loader-hud-center">
-            {phase === 'loading' ? (
-              <div className="loader-percentage">
-                <span className="value">{String(displayPercentage).padStart(3, '0')}</span>
-                <span className="symbol">%</span>
-              </div>
-            ) : (
-              <div className={`loader-lock-icon ${phase === 'ready' || phase === 'exit' ? 'unlocked' : ''}`}>
-                <div className="loader-lock-shackle" />
-                <div className="loader-lock-body" />
-              </div>
-            )}
+      <div className="relative z-10 flex flex-col items-center max-w-md w-full px-6">
+        {/* Sleek Name Display */}
+        <div className="mb-12 text-center">
+          <div className="overflow-hidden">
+            <h1 className={`text-4xl md:text-5xl font-bold font-space-grotesk text-white mb-3 tracking-wide transition-transform duration-1000 ${phase !== 'loading' ? 'translate-y-0' : 'translate-y-0'}`}>
+              MANAN KUMAR
+            </h1>
+          </div>
+          <div className="flex items-center justify-center gap-4 text-sm md:text-base font-medium font-space-grotesk tracking-widest uppercase">
+            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">AI Engineer</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-white/20"></span>
+            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Full Stack</span>
           </div>
         </div>
 
-        {/* Name Reveal with Scramble */}
-        <div className="loader-branding">
-          <div className="loader-name-scrambled font-bebas">
-            <ScrambleText text="MANAN KUMAR" delay={0} isReady={phase === 'reveal' || phase === 'ready'} />
-          </div>
-          <div className={`loader-role ${phase === 'ready' ? 'glitch-in' : ''}`}>
-             <ScrambleText text="AI ENGINEER & FULL STACK DEVELOPER" delay={800} isReady={phase === 'reveal' || phase === 'ready'} />
-          </div>
-        </div>
-
-        {/* Boot Logs Terminal */}
-        <div className="loader-boot-logs">
-          {bootLogs.slice(0, currentLogIndex + 1).map((log, i) => (
-            <div key={i} className="loader-log-line">
-              <span className="loader-log-prefix">[OK]</span> {log}
+        {/* Glassmorphism Progress Bar */}
+        <div className="w-full glass p-2 rounded-2xl border border-white/5 shadow-2xl relative overflow-hidden backdrop-blur-md">
+          {/* Background Track */}
+          <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden relative">
+            {/* The fill */}
+            <div 
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 rounded-full transition-all duration-100 ease-out loader-spark-bar"
+              style={{ width: `${displayPercentage}%` }}
+            >
+              {/* Spark effect at the tip of the progress bar */}
+              {displayPercentage < 100 && (
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 w-8 h-8 bg-white blur-[6px] opacity-80 rounded-full -mr-4 translate-y-[0px]"></div>
+              )}
             </div>
-          ))}
-          {phase === 'loading' && <div className="loader-cursor" />}
-        </div>
-
-        {/* Bottom Loading Bar */}
-        <div className="loader-hud-bar-container">
-          <div className="loader-hud-bar-track">
-            {/* Hexagon segments inside the bar */}
-            {Array.from({ length: 40 }).map((_, i) => (
-              <div 
-                key={i} 
-                className={`loader-hud-segment ${i < (displayPercentage / 100 * 40) ? 'filled' : ''}`} 
-              />
-            ))}
-          </div>
-          <div className="loader-hud-status">
-            {phase === 'loading' ? 'AUTHENTICATING...' : 'ACCESS GRANTED'}
           </div>
         </div>
 
+        {/* Percentage text & Icons */}
+        <div className="w-full flex justify-between items-center mt-8 px-2 text-sm font-space-grotesk">
+          <div className="flex gap-6">
+            <div className={`flex flex-col items-center transition-all duration-500 ${displayPercentage > 20 ? 'text-blue-400 opacity-100 scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' : 'text-white/20 opacity-50 grayscale'}`}>
+              <FiCpu size={22} className="mb-1" />
+            </div>
+            <div className={`flex flex-col items-center transition-all duration-500 ${displayPercentage > 50 ? 'text-cyan-400 opacity-100 scale-110 drop-shadow-[0_0_8px_rgba(6,182,212,0.8)]' : 'text-white/20 opacity-50 grayscale'}`}>
+              <FiCode size={22} className="mb-1" />
+            </div>
+            <div className={`flex flex-col items-center transition-all duration-500 ${displayPercentage > 80 ? 'text-purple-400 opacity-100 scale-110 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]' : 'text-white/20 opacity-50 grayscale'}`}>
+              <FiZap size={22} className="mb-1" />
+            </div>
+          </div>
+          <div className="text-white font-light text-2xl tracking-tighter flex items-baseline">
+            {String(displayPercentage).padStart(3, '0')}
+            <span className="text-sm ml-1 text-white/50">%</span>
+          </div>
+        </div>
       </div>
     </div>
   );
