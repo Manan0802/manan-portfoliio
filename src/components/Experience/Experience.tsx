@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SectionTitle } from '../shared/SectionTitle';
 import { experiences } from '../../data/experience';
 import { certifications } from '../../data/certifications';
@@ -23,6 +23,30 @@ const CustomMarquee: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 );
 
 export const Experience: React.FC = () => {
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleSections((prev) => new Set([...prev, entry.target.id]));
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    );
+
+    Object.values(sectionRefs.current).forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const isVisible = (id: string) => visibleSections.has(id);
+
   return (
     <section id="experience" className="pt-32 pb-12 px-6 relative z-20">
       {/* Starfield Background */}
@@ -56,7 +80,11 @@ export const Experience: React.FC = () => {
         </div>
 
         {/* Certifications Box */}
-        <div className="mt-32 relative">
+        <div 
+          id="exp-certs"
+          ref={(el) => { sectionRefs.current['exp-certs'] = el; }}
+          className={`mt-32 relative transition-all duration-1000 delay-300 ${isVisible('exp-certs') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+        >
           <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
           <h3 className="text-2xl font-space-grotesk font-bold text-center text-white mb-8 relative z-10">
             Certifications & <span className="text-primary">Achievements</span>
@@ -74,7 +102,11 @@ export const Experience: React.FC = () => {
         </div>
 
         {/* Badges Layout */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div 
+          id="exp-badges"
+          ref={(el) => { sectionRefs.current['exp-badges'] = el; }}
+          className={`mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-1000 delay-400 ${isVisible('exp-badges') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+        >
           <AchievementBadge
             icon="🏆"
             title="Top 10% Globally"
@@ -104,8 +136,26 @@ interface ExperienceCardProps {
 const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience, index }) => {
   const isLeft = index % 2 === 0;
 
+  // We reuse the same visibility hook inside the child or pass a ref up. Let's do it individually here:
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setIsVisible(true);
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    );
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className={`relative flex flex-col md:flex-row items-start md:items-center ${isLeft ? 'md:flex-row-reverse' : ''}`}>
+    <div 
+      ref={cardRef}
+      className={`relative flex flex-col md:flex-row items-start md:items-center ${isLeft ? 'md:flex-row-reverse' : ''} transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+    >
       {/* Timeline Node */}
       <div className="absolute left-[-11px] md:left-1/2 transform md:-translate-x-1/2 w-6 h-6 rounded-full border-[4px] border-[#050505] bg-primary z-10 shadow-[0_0_15px_rgba(59,130,246,0.8)] mt-6 md:mt-0" />
 

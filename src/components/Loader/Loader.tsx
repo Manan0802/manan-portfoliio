@@ -81,14 +81,14 @@ export const Loader: React.FC = () => {
       setProgress(displayValue);
       setDisplayPercentage(displayValue);
 
-      if (rawProgress < 100) {
+        if (rawProgress < 100) {
         requestAnimationFrame(animate);
       } else {
         setPhase('reveal');
         setTimeout(() => setPhase('ready'), 200);
         setTimeout(() => {
           setPhase('exit');
-          setTimeout(() => completeLoading(), 1500); // Wait for shutter animation
+          setTimeout(() => completeLoading(), 1000); // Wait for fade-out animation
         }, 2000);
       }
     };
@@ -107,11 +107,7 @@ export const Loader: React.FC = () => {
 
   return (
     <div className={`loader-container ${phase === 'exit' ? 'pointer-events-none' : ''}`}>
-      {/* Split Shutter Doors */}
-      <div className={`loader-shutter top ${phase === 'exit' ? 'open' : ''}`} />
-      <div className={`loader-shutter bottom ${phase === 'exit' ? 'open' : ''}`} />
-      
-      {/* Main UI Overlay - Fades out before doors open */}
+      {/* Main UI Overlay - Fades out entirely on exit */}
       <div className={`loader-ui ${phase === 'exit' ? 'fade-out' : ''}`}>
         
         {/* Animated grid background */}

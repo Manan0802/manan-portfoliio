@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SectionTitle } from '../shared/SectionTitle';
 import { GlowButton } from '../shared/GlowButton';
 import { FiGithub, FiLinkedin, FiMail, FiCode } from 'react-icons/fi';
@@ -25,6 +25,30 @@ export const Contact: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [isCalendlyOpen, setIsCalendlyOpen] = useState(false);
+
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleSections((prev) => new Set([...prev, entry.target.id]));
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    );
+
+    Object.values(sectionRefs.current).forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const isVisible = (id: string) => visibleSections.has(id);
 
   useCalendlyEventListener({
     onProfilePageViewed: () => console.log('Calendly opened'),
@@ -86,7 +110,11 @@ export const Contact: React.FC = () => {
 
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Left: Contact Info */}
-          <div className="space-y-10">
+          <div 
+            id="contact-info"
+            ref={(el) => { sectionRefs.current['contact-info'] = el; }}
+            className={`space-y-10 transition-all duration-1000 ${isVisible('contact-info') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+          >
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-medium mb-6">
                 <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -136,7 +164,11 @@ export const Contact: React.FC = () => {
           </div>
 
           {/* Right: Contact Form */}
-          <div className="glass rounded-2xl p-8">
+          <div 
+            id="contact-form"
+            ref={(el) => { sectionRefs.current['contact-form'] = el; }}
+            className={`glass rounded-2xl p-8 transition-all duration-1000 delay-200 ${isVisible('contact-form') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+          >
             {submitted ? (
               <div className="h-full flex flex-col items-center justify-center text-center">
                 <div className="text-6xl mb-4">🚀</div>

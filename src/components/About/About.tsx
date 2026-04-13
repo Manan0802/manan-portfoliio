@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { SectionTitle } from '../shared/SectionTitle';
 import { useCountUp } from '../../hooks/useScrollAnimation';
 import { SkillsSection } from './Skills';
@@ -11,6 +11,30 @@ const stats = [
 ];
 
 export const About: React.FC = () => {
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleSections((prev) => new Set([...prev, entry.target.id]));
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    );
+
+    Object.values(sectionRefs.current).forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const isVisible = (id: string) => visibleSections.has(id);
+
   return (
     <section id="about" className="py-12 px-6 relative z-20">
       <div className="max-w-7xl mx-auto relative">
@@ -21,7 +45,11 @@ export const About: React.FC = () => {
         />
 
         {/* Intro Section - Photo & Short Bio */}
-        <div className="grid md:grid-cols-12 gap-12 items-center mb-16">
+        <div 
+          id="about-intro"
+          ref={(el) => { sectionRefs.current['about-intro'] = el; }}
+          className={`grid md:grid-cols-12 gap-12 items-center mb-16 transition-all duration-1000 ${isVisible('about-intro') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+        >
           {/* Detailed Image Frame */}
           <div className="md:col-span-5 relative w-full h-[500px] glass rounded-3xl overflow-hidden group shadow-[0_0_40px_rgba(59,130,246,0.1)]">
             <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-[#000000]/20 to-transparent opacity-80 z-10 pointer-events-none" />
@@ -60,7 +88,11 @@ export const About: React.FC = () => {
         </div>
 
         {/* The Narrative Story Grid (Bento Box Chapters) */}
-        <div className="mb-20">
+        <div 
+          id="about-story"
+          ref={(el) => { sectionRefs.current['about-story'] = el; }}
+          className={`mb-20 transition-all duration-1000 delay-200 ${isVisible('about-story') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+        >
           <div className="text-center mb-16">
             <h3 className="text-3xl md:text-4xl font-space-grotesk font-bold text-white mb-4">
               My Story
@@ -120,10 +152,20 @@ export const About: React.FC = () => {
         </div>
 
         {/* Skills Section */}
-        <SkillsSection />
+        <div 
+          id="about-skills"
+          ref={(el) => { sectionRefs.current['about-skills'] = el; }}
+          className={`transition-all duration-1000 delay-300 ${isVisible('about-skills') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+        >
+          <SkillsSection />
+        </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div 
+          id="about-stats"
+          ref={(el) => { sectionRefs.current['about-stats'] = el; }}
+          className={`grid grid-cols-2 md:grid-cols-4 gap-8 transition-all duration-1000 delay-400 ${isVisible('about-stats') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+        >
           {stats.map((stat) => (
             <StatCard key={stat.label} {...stat} />
           ))}
