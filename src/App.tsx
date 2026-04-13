@@ -13,6 +13,7 @@ import { Contact } from './components/Contact/Contact';
 import { Footer } from './components/Contact/Footer';
 import { CaseStudy } from './components/CaseStudy/CaseStudy';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import Lenis from 'lenis';
 import './App.css';
 import React from 'react';
@@ -100,8 +101,9 @@ function AppContent() {
         <Footer />
       </div>
 
-      {/* Analytics */}
+      {/* Analytics & Speed Insights */}
       <Analytics />
+      <SpeedInsights />
     </>
   );
 }

@@ -38,11 +38,11 @@ export const Loader: React.FC = () => {
   return (
     <div className={`fixed inset-0 z-[10000] flex flex-col items-center justify-center transition-all duration-700 bg-[#030712] ${phase === 'exit' ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'}`}>
       
-      {/* Ambient Orbs matching Services page */}
+      {/* Ambient Orbs matching Services page (No animation to save GPU while WebGL loads) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px] animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[150px] animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/4 left-1/4 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[100px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[100px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-[100px]" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center max-w-md w-full px-6">
@@ -60,10 +60,10 @@ export const Loader: React.FC = () => {
           </div>
         </div>
 
-        {/* Glassmorphism Progress Bar */}
-        <div className="w-full glass p-2 rounded-2xl border border-white/5 shadow-2xl relative overflow-hidden backdrop-blur-md">
+        {/* Modern Solid Progress Bar (to preserve GPU for WebGL) */}
+        <div className="w-full bg-[#0d1326] p-2 rounded-2xl border border-white/5 shadow-2xl relative overflow-hidden">
           {/* Background Track */}
-          <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden relative">
+          <div className="h-2 w-full bg-black/50 rounded-full overflow-hidden relative">
             {/* The fill */}
             <div 
               className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 via-cyan-400 to-purple-500 rounded-full transition-all duration-100 ease-out loader-spark-bar"

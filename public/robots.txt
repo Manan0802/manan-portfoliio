@@ -1,14 +1,8 @@
-User-agent: *
-Allow: /
-
-# Allow AI crawlers for AEO (Answer Engine Optimization)
+# Allow search indexing and AI citation crawlers to cite this portfolio
 User-agent: GPTBot
 Allow: /
 
 User-agent: ChatGPT-User
-Allow: /
-
-User-agent: PerplexityBot
 Allow: /
 
 User-agent: ClaudeBot
@@ -17,10 +11,17 @@ Allow: /
 User-agent: anthropic-ai
 Allow: /
 
+User-agent: PerplexityBot
+Allow: /
+
 User-agent: Google-Extended
 Allow: /
 
 User-agent: Bingbot
+Allow: /
+
+# Allow all other user agents
+User-agent: *
 Allow: /
 
 Sitemap: https://manankumar.dev/sitemap.xml
