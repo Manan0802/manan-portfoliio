@@ -636,7 +636,7 @@ export const Services: React.FC = () => {
           <div className="grid md:grid-cols-3 gap-6">
             <div className="glass rounded-2xl p-8 border border-white/5 hover:border-emerald-500/30 transition-all duration-300 flex flex-col group">
               <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2">Architecture Audit</h3>
-              <p className="text-emerald-400 font-mono mb-6">$500 <span className="text-secondary text-base">/ scoping</span></p>
+              <p className="text-emerald-400 font-mono mb-6">Fixed Fee <span className="text-secondary text-base">/ scoping</span></p>
               <ul className="space-y-3 mb-8 flex-1">
                 <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> 60-min Deep Dive</li>
                 <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> Tech Stack Validation</li>
@@ -650,7 +650,7 @@ export const Services: React.FC = () => {
                 <span className="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</span>
               </div>
               <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2">Agentic MVP Build</h3>
-              <p className="text-primary font-mono mb-6">Starts at <span className="text-2xl">$2,500</span></p>
+              <p className="text-primary font-mono mb-6">Milestone <span className="text-xl">Based</span></p>
               <ul className="space-y-3 mb-8 flex-1">
                 <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> End-to-End Delivery</li>
                 <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> Multi-Agent Setup</li>
