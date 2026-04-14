@@ -5,7 +5,8 @@ import {
   FiCpu, FiMonitor, FiBarChart2, FiZap, FiLayers, FiCode,
   FiArrowRight, FiCheck, FiStar, FiMessageCircle, FiGitBranch,
   FiBox, FiTerminal, FiDatabase, FiGlobe, FiTrendingUp, FiShield,
-  FiChevronDown, FiClock, FiUsers, FiAward, FiRefreshCw
+  FiChevronDown, FiClock, FiUsers, FiAward, FiRefreshCw,
+  FiCodepen, FiMic
 } from 'react-icons/fi';
 import './Services.css';
 
@@ -94,6 +95,48 @@ const services = [
     glowColor: 'shadow-amber-500/20',
     iconBg: 'bg-amber-500/10',
     accentText: 'text-amber-400',
+  },
+  {
+    icon: <FiCodepen />,
+    title: 'High-End 3D Web Experiences',
+    tagline: 'Immersive Design Meets Performance',
+    description: 'Bespoke, cinematic website development blending 3D models with buttery-smooth interactions. I build award-winning frontends that captivate users while maintaining perfect lighthouse scores.',
+    deliverables: [
+      'Interactive 3D Environments (Three.js/Spline)',
+      'GSAP & Framer Motion Animations',
+      'Custom Shader Programming (GLSL)',
+      'Performant WebGL Pipelines',
+      'Scroll-Driven Storytelling',
+      'Responsive Enterprise UI/UX Design',
+    ],
+    techStack: ['Three.js', 'Spline', 'GSAP', 'Framer Motion', 'React', 'WebGL'],
+    highlight: 'Engineered cinematic portfolio with 60FPS WebGL object physics',
+    color: 'from-rose-500 to-red-400',
+    borderColor: 'border-rose-500/30',
+    glowColor: 'shadow-rose-500/20',
+    iconBg: 'bg-rose-500/10',
+    accentText: 'text-rose-400',
+  },
+  {
+    icon: <FiMic />,
+    title: 'Voice Bots & Conversational AI',
+    tagline: 'Interfaces That Speak',
+    description: 'Next-generation AI assistants capable of real-time voice synthesis and deep reasoning. I design conversational agents for customer support, sales qualification, and interactive coaching.',
+    deliverables: [
+      'Real-Time Voice Streaming APIs',
+      'Text-to-Speech (ElevenLabs/OpenAI)',
+      'Dynamic Context & Memory Retention',
+      'Omnichannel Integration (WhatsApp, Web, Telephony)',
+      'Intent Recognition & Sentiment Analysis',
+      'Custom Persona & Tone Engineering',
+    ],
+    techStack: ['ElevenLabs', 'Twilio', 'OpenAI Realtime', 'WebRTC', 'VAPI', 'Bland AI'],
+    highlight: 'Deployed NeoFin voice-command logic for hands-free finance tracking',
+    color: 'from-indigo-500 to-blue-500',
+    borderColor: 'border-indigo-500/30',
+    glowColor: 'shadow-indigo-500/20',
+    iconBg: 'bg-indigo-500/10',
+    accentText: 'text-indigo-400',
   },
 ];
 
