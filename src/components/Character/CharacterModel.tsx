@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability */
 import React, { useEffect, useRef } from 'react';
 import { useGLTF, useAnimations } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';

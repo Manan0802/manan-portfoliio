@@ -94,7 +94,7 @@ export const SkillsAvalanche: React.FC = () => {
       requestAnimationFrame(syncBodies);
     };
 
-    let animationFrameId = requestAnimationFrame(syncBodies);
+    const animationFrameId = requestAnimationFrame(syncBodies);
 
     // Resize handler — walls use initial dimensions (acceptable for layout)
     const handleResize = () => { /* intentional no-op */ };

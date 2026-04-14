@@ -103,10 +103,10 @@ export function ArchitectureDiagram({ projectId }: ArchitectureDiagramProps) {
   const initialNodes = projectId === 'neofin' ? neofinNodes : projectId === 'indiamart' ? indiamartNodes : null;
   const initialEdges = projectId === 'neofin' ? neofinEdges : projectId === 'indiamart' ? indiamartEdges : null;
 
-  if (!initialNodes) return null;
-
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
+  const [nodes, , onNodesChange] = useNodesState(initialNodes ?? []);
   const [edges, , onEdgesChange] = useEdgesState(initialEdges ?? []);
+
+  if (!initialNodes) return null;
 
   return (
     <div style={{ width: '100%', height: '350px', background: 'rgba(0,0,0,0.5)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.1)' }}>
