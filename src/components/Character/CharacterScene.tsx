@@ -140,7 +140,10 @@ export const CharacterScene: React.FC = () => {
       <div style={canvasStyle}>
         <Spline
           scene="https://prod.spline.design/9AC1QFiaRuUHJ3rB/scene.splinecode"
-          onLoad={() => setHasLoaded(true)}
+          onLoad={() => {
+            setHasLoaded(true);
+            window.dispatchEvent(new CustomEvent('spline-loaded'));
+          }}
           style={{ width: '100%', height: '100%' }}
         />
       </div>

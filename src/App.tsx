@@ -54,34 +54,42 @@ function AppContent() {
   useEffect(() => {
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     
+    let lenisInstance: Lenis | null = null;
+    
     // Skip Lenis on mobile — native scroll is faster and smoother on phones
-    if (isTouchDevice) {
-      completeLoading();
-      return;
-    }
+    if (!isTouchDevice) {
+      lenisInstance = new Lenis({
+        duration: 1.0,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
 
-    const lenisInstance = new Lenis({
-      duration: 1.0,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    });
+      function raf(time: number) {
+        lenisInstance?.raf(time);
+        requestAnimationFrame(raf);
+      }
 
-    function raf(time: number) {
-      lenisInstance.raf(time);
       requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    const handleSplineLoad = () => {
+      completeLoading();
+    };
 
-    // Complete loading after a minimum time
+    window.addEventListener('spline-loaded', handleSplineLoad);
+
+    // Complete loading after a minimum time or maximum timeout if Spline is slow
+    const maxWait = pathname !== '/' ? 800 : 8000; // 8s max on home, 0.8s on other routes
+    
     const timeout = setTimeout(() => {
       completeLoading();
-    }, 1500);
+    }, maxWait);
 
     return () => {
-      lenisInstance.destroy();
+      lenisInstance?.destroy();
       clearTimeout(timeout);
+      window.removeEventListener('spline-loaded', handleSplineLoad);
     };
-  }, [completeLoading]);
+  }, [completeLoading, pathname]);
 
   return (
     <>
