@@ -741,12 +741,12 @@ export const Services: React.FC = () => {
 
           <div className="grid md:grid-cols-3 gap-6">
             <div className="glass rounded-2xl p-8 border border-white/5 hover:border-emerald-500/30 transition-all duration-300 flex flex-col group">
-              <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2">Architecture Audit</h3>
+              <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2">System Architecture Audit</h3>
               <p className="text-emerald-400 font-mono mb-6">Fixed Fee <span className="text-secondary text-base">/ scoping</span></p>
               <ul className="space-y-3 mb-8 flex-1">
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> 60-min Deep Dive</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> Tech Stack Validation</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> Vector DB Strategy</li>
+                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> 1-on-1 Discovery Deep Dive</li>
+                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> Comprehensive Tech Stack Validation</li>
+                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> Security & Scalability Assessment</li>
               </ul>
               <Link to="/contact" className="w-full py-3 rounded-lg border border-emerald-500/30 text-emerald-400 text-center font-medium hover:bg-emerald-500/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">Book Audit</Link>
             </div>
@@ -755,23 +755,23 @@ export const Services: React.FC = () => {
               <div className="absolute top-0 right-4 -translate-y-1/2">
                 <span className="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</span>
               </div>
-              <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2">Agentic MVP Build</h3>
+              <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2">Core Project Build</h3>
               <p className="text-primary font-mono mb-6">Milestone <span className="text-xl">Based</span></p>
               <ul className="space-y-3 mb-8 flex-1">
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> End-to-End Delivery</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> Multi-Agent Setup</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> Production Vercel Deploy</li>
+                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> End-to-End System Development</li>
+                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> Custom Application Architecture</li>
+                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> Production-Grade Cloud Deployment</li>
               </ul>
               <Link to="/contact" className="w-full py-3 rounded-lg bg-primary text-white text-center font-bold hover:bg-blue-600 transition-colors glow-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">Start Project</Link>
             </div>
 
             <div className="glass rounded-2xl p-8 border border-white/5 hover:border-purple-500/30 transition-all duration-300 flex flex-col group">
-              <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2">Enterprise Retainer</h3>
+              <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2">Enterprise Partnership</h3>
               <p className="text-purple-400 font-mono mb-6">Custom <span className="text-secondary text-base">/ monthly</span></p>
               <ul className="space-y-3 mb-8 flex-1">
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-purple-400 mt-1" /> Dedicated Tech Partner</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-purple-400 mt-1" /> Scale Infrastructure</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-purple-400 mt-1" /> Priority SLA & Support</li>
+                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-purple-400 mt-1" /> Dedicated Fractional Engineering</li>
+                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-purple-400 mt-1" /> Continuous Infrastructure Scaling</li>
+                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-purple-400 mt-1" /> Guaranteed Priority SLA Support</li>
               </ul>
               <Link to="/contact" className="w-full py-3 rounded-lg border border-purple-500/30 text-purple-400 text-center font-medium hover:bg-purple-500/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500">Contact Sales</Link>
             </div>
