@@ -6,7 +6,7 @@ import {
   FiArrowRight, FiCheck, FiStar, FiMessageCircle, FiGitBranch,
   FiBox, FiTerminal, FiDatabase, FiGlobe, FiTrendingUp, FiShield,
   FiChevronDown, FiClock, FiUsers, FiAward, FiRefreshCw,
-  FiCodepen, FiMic
+  FiCodepen, FiMic, FiSliders, FiServer, FiSearch
 } from 'react-icons/fi';
 import './Services.css';
 
@@ -137,6 +137,69 @@ const services = [
     glowColor: 'shadow-indigo-500/20',
     iconBg: 'bg-indigo-500/10',
     accentText: 'text-indigo-400',
+  },
+  {
+    icon: <FiSliders />,
+    title: 'Enterprise Workflow Automation',
+    tagline: 'Connect. Automate. Scale.',
+    description: 'Eliminating manual data entry and operational bottlenecks through custom automation pipelines. I connect disjointed SaaS tools to create a unified, highly efficient business engine.',
+    deliverables: [
+      'n8n & Zapier Custom Pipelines',
+      'CRM API Integrations (HubSpot/Salesforce)',
+      'Automated Sales & Lead Routing',
+      'AI-Powered Email Parsing',
+      'Slack & Discord Notification Bots',
+      'Internal Tooling & Admin Panels',
+    ],
+    techStack: ['n8n', 'Zapier', 'Python', 'Node.js', 'REST APIs', 'Webhooks'],
+    highlight: 'Saved marketing agencies 40+ hours/week by automating lead qualification',
+    color: 'from-fuchsia-500 to-pink-500',
+    borderColor: 'border-fuchsia-500/30',
+    glowColor: 'shadow-fuchsia-500/20',
+    iconBg: 'bg-fuchsia-500/10',
+    accentText: 'text-fuchsia-400',
+  },
+  {
+    icon: <FiServer />,
+    title: 'Cloud Infrastructure & DevOps',
+    tagline: 'Resilient. Scalable. Secure.',
+    description: 'Designing and managing robust cloud environments. From zero-downtime CI/CD pipelines to AWS cost optimization, I ensure your applications can handle sudden hyperscaling without breaking.',
+    deliverables: [
+      'Docker Containerization',
+      'Automated CI/CD (GitHub Actions)',
+      'Database Migration & Scaling',
+      'AWS / Vercel Architecture Setup',
+      'Uptime Monitoring & Alerts',
+      'Cloud Cost Optimization',
+    ],
+    techStack: ['Docker', 'AWS', 'Vercel', 'GitHub Actions', 'PostgreSQL', 'Redis'],
+    highlight: 'Deployed zero-downtime infrastructure for global portfolio delivery',
+    color: 'from-teal-500 to-emerald-500',
+    borderColor: 'border-teal-500/30',
+    glowColor: 'shadow-teal-500/20',
+    iconBg: 'bg-teal-500/10',
+    accentText: 'text-teal-400',
+  },
+  {
+    icon: <FiSearch />,
+    title: 'Applied RAG & Enterprise Search',
+    tagline: 'Unlocking Organizational Knowledge',
+    description: 'Building secure, local Retrieval-Augmented Generation engines. I allow your workforce to instantly search and chat with decades of PDF documents, wikis, and internal databases securely.',
+    deliverables: [
+      'Vector Database Architecture',
+      'Document Parsing & Chunking Strategies',
+      'FAISS / Pinecone Integration',
+      'LLM Output Grounding & Hallucination Defense',
+      'Secure Enterprise Authentication',
+      'Multi-Modal Search (Text/Images)',
+    ],
+    techStack: ['FAISS', 'Pinecone', 'LangChain', 'OpenAI', 'Python', 'pgvector'],
+    highlight: 'Engineered high-accuracy semantic search capable of extracting tabular data',
+    color: 'from-yellow-500 to-amber-500',
+    borderColor: 'border-yellow-500/30',
+    glowColor: 'shadow-yellow-500/20',
+    iconBg: 'bg-yellow-500/10',
+    accentText: 'text-yellow-400',
   },
 ];
 
