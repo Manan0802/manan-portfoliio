@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { testimonials } from '../../data/testimonials';
 import {
   FiCpu, FiMonitor, FiBarChart2, FiZap, FiLayers, FiCode,
@@ -164,27 +165,27 @@ const techCategories = [
 const faqs = [
   {
     question: 'What types of projects do you take on?',
-    answer: 'I specialize in AI/LLM integrations (agentic systems, RAG, chatbots), full-stack web applications (MERN/Next.js), ML model deployment, and AI-powered dashboards. If it involves code + intelligence, I\'m your guy.',
+    answer: 'I specialize in architecting Agentic AI systems (LangGraph), Full-Stack Enterprise Web Apps (MERN/Next.js/React), production-grade ML models, and interactive real-time dashboards. If it bridges intelligent logic with exceptional UX, I build it.',
   },
   {
     question: 'How do you handle project communication?',
-    answer: 'Daily async updates via your preferred channel (Slack, Discord, WhatsApp, Email). Weekly sync calls for milestone reviews. You\'ll never be in the dark about progress.',
+    answer: 'I integrate seamlessly into your workflow. Expect concise daily async updates via Slack/Email outlining code shipped and obstacles cleared, supplemented by weekly strategic syncs to align on milestone delivery.',
   },
   {
     question: 'Do you provide source code and documentation?',
-    answer: 'Absolutely. You get 100% ownership of all source code, deployed on your GitHub/GitLab. Every project includes inline documentation, README files, and a deployment guide.',
+    answer: 'Yes, 100% intellectual property ownership transfers to you immediately upon delivery. Every project ships with highly readable, modularized code, extensive inline documentation, and comprehensive architectural READMEs.',
   },
   {
     question: 'What\'s your typical turnaround time?',
-    answer: 'It depends on scope. A landing page or API integration: 3–5 days. A full-stack app with AI: 2–4 weeks. I always provide a timeline estimate before starting, and I stick to it.',
+    answer: 'Precision meets velocity. Landing pages and direct API integrations deliver in 3–5 days. Minimum Viable Products (MVPs) launch in 2–4 weeks. Complex Enterprise AI integration cycles typically run 4–8 weeks.',
   },
   {
     question: 'Do you offer post-delivery support?',
-    answer: 'Yes — every project includes 2 weeks of free bug-fix support after delivery. Extended maintenance and feature additions can be discussed separately.',
+    answer: 'Absolutely. Every production deployment includes a complimentary 2-week hypercare period for immediate performance tuning and bug resolution. Ongoing SLA-based maintenance retainers are also available.',
   },
   {
     question: 'Can you work with my existing codebase?',
-    answer: 'Definitely. I regularly integrate AI features into existing apps, optimize slow backends, or add new modules to production codebases. I\'ll audit first, then propose a clean integration plan.',
+    answer: 'Definitely. I regularly parachute into existing codebases to refactor legacy architectures, scale performance bottlenecks, or inject advanced AI capabilities like vector Search and RAG seamlessly into your live environment.',
   },
 ];
 
@@ -375,13 +376,13 @@ export const Services: React.FC = () => {
                     </ul>
 
                     <div className="mt-8 pt-6 border-t border-white/5">
-                      <a
-                        href="#contact"
+                      <Link
+                        to="/contact"
                         className={`inline-flex items-center gap-2 text-sm font-medium ${service.accentText} hover:underline group/link`}
                       >
                         Discuss This Service
                         <FiArrowRight className="group-hover/link:translate-x-1 transition-transform" />
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -641,7 +642,7 @@ export const Services: React.FC = () => {
                 <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> Tech Stack Validation</li>
                 <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> Vector DB Strategy</li>
               </ul>
-              <a href="/contact" className="w-full py-3 rounded-lg border border-emerald-500/30 text-emerald-400 text-center font-medium hover:bg-emerald-500/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">Book Audit</a>
+              <Link to="/contact" className="w-full py-3 rounded-lg border border-emerald-500/30 text-emerald-400 text-center font-medium hover:bg-emerald-500/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">Book Audit</Link>
             </div>
 
             <div className="glass rounded-2xl p-8 border border-primary/40 bg-primary/5 hover:border-primary transition-all duration-300 relative flex flex-col transform hover:-translate-y-2">
@@ -655,7 +656,7 @@ export const Services: React.FC = () => {
                 <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> Multi-Agent Setup</li>
                 <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> Production Vercel Deploy</li>
               </ul>
-              <a href="/contact" className="w-full py-3 rounded-lg bg-primary text-white text-center font-bold hover:bg-blue-600 transition-colors glow-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">Start Project</a>
+              <Link to="/contact" className="w-full py-3 rounded-lg bg-primary text-white text-center font-bold hover:bg-blue-600 transition-colors glow-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">Start Project</Link>
             </div>
 
             <div className="glass rounded-2xl p-8 border border-white/5 hover:border-purple-500/30 transition-all duration-300 flex flex-col group">
@@ -666,7 +667,7 @@ export const Services: React.FC = () => {
                 <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-purple-400 mt-1" /> Scale Infrastructure</li>
                 <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-purple-400 mt-1" /> Priority SLA & Support</li>
               </ul>
-              <a href="/contact" className="w-full py-3 rounded-lg border border-purple-500/30 text-purple-400 text-center font-medium hover:bg-purple-500/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500">Contact Sales</a>
+              <Link to="/contact" className="w-full py-3 rounded-lg border border-purple-500/30 text-purple-400 text-center font-medium hover:bg-purple-500/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500">Contact Sales</Link>
             </div>
           </div>
         </div>
@@ -723,13 +724,13 @@ export const Services: React.FC = () => {
               </p>
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a
-                  href="/contact"
+                <Link
+                  to="/contact"
                   className="inline-flex items-center gap-2 px-10 py-4 rounded-xl bg-primary hover:bg-blue-600 text-white font-bold text-lg transition-all duration-300 hover:scale-105 glow-blue group"
                 >
                   Let's Talk
                   <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-                </a>
+                </Link>
                 <a
                   href="mailto:04manank@gmail.com"
                   className="inline-flex items-center gap-2 px-10 py-4 rounded-xl border border-primary/50 text-primary hover:bg-primary/10 font-medium text-lg transition-all duration-300"
