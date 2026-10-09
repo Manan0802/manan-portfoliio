@@ -34,3 +34,6 @@ test_playwright.js
 playwright-report/
 test-results/
 
+
+# audit screenshots and reports — local only
+docs/audit/
