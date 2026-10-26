@@ -6,17 +6,19 @@ import './Loader.css';
 export const Loader: React.FC = () => {
   const { setProgress, completeLoading } = useLoading();
   const [displayPercentage, setDisplayPercentage] = useState(0);
-  const [phase, setPhase] = useState<'loading' | 'reveal' | 'exit'>('loading');
+  const [phase, setPhase] = useState<'loading' | 'exit'>('loading');
 
-  // Simulated progress
+  // Short scripted splash (~1.3 s total): progress bar, then a quick fade. It never waits for the 3D scene.
   useEffect(() => {
     const startTime = Date.now();
-    const totalDuration = 2500; // Faster, modern
+    const totalDuration = 900;
+    let raf = 0;
+    let exitTimer: ReturnType<typeof setTimeout> | undefined;
 
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const rawProgress = Math.min(100, (elapsed / totalDuration) * 100);
-      
+
       const eased = rawProgress === 100 ? 1 : 1 - Math.pow(2, -10 * rawProgress / 100);
       const displayValue = Math.floor(eased * 100);
 
@@ -24,19 +26,25 @@ export const Loader: React.FC = () => {
       setDisplayPercentage(displayValue);
 
       if (rawProgress < 100) {
-        requestAnimationFrame(animate);
+        raf = requestAnimationFrame(animate);
       } else {
-        setPhase('reveal');
-        setTimeout(() => setPhase('exit'), 800);
-        setTimeout(() => completeLoading(), 1600); // Wait for fade-out animation
+        setPhase('exit');
+        exitTimer = setTimeout(() => completeLoading(), 400); // match the fade-out
       }
     };
 
-    requestAnimationFrame(animate);
+    raf = requestAnimationFrame(animate);
+    return () => {
+      cancelAnimationFrame(raf);
+      if (exitTimer) clearTimeout(exitTimer);
+    };
   }, [setProgress, completeLoading]);
 
   return (
-    <div className={`fixed inset-0 z-[10000] flex flex-col items-center justify-center transition-all duration-700 bg-[#030712] ${phase === 'exit' ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'}`}>
+    <div
+      aria-hidden="true"
+      className={`fixed inset-0 z-[10000] flex flex-col items-center justify-center transition-all duration-400 bg-[#030712] ${phase === 'exit' ? 'opacity-0 scale-105 pointer-events-none' : 'opacity-100 scale-100'}`}
+    >
       
       {/* Ambient Orbs matching Services page (No animation to save GPU while WebGL loads) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -49,9 +57,9 @@ export const Loader: React.FC = () => {
         {/* Sleek Name Display */}
         <div className="mb-12 text-center">
           <div className="overflow-hidden">
-            <h1 className={`text-4xl md:text-5xl font-bold font-space-grotesk text-white mb-3 tracking-wide transition-transform duration-1000 ${phase !== 'loading' ? 'translate-y-0' : 'translate-y-0'}`}>
+            <p className="text-4xl md:text-5xl font-bold font-space-grotesk text-white mb-3 tracking-wide">
               MANAN KUMAR
-            </h1>
+            </p>
           </div>
           <div className="flex items-center justify-center gap-4 text-sm md:text-base font-medium font-space-grotesk tracking-widest uppercase">
             <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">AI Engineer</span>

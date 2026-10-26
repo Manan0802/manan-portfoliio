@@ -24,4 +24,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://manankumar.dev/sitemap.xml
+Sitemap: https://www.manankumar.in/sitemap.xml

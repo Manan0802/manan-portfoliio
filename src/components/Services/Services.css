@@ -1,1 +1,6 @@
-/* Services styles - flip card already in index.css */
+/* Services page: pause the pulsing availability dot for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .svc-page .pulse-dot {
+    animation: none;
+  }
+}

@@ -1,14 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SectionTitle } from '../shared/SectionTitle';
-import { useCountUp } from '../../hooks/useScrollAnimation';
 import { SkillsSection } from './Skills';
-
-const stats = [
-  { value: 400, label: 'DSA Problems Solved', suffix: '+' },
-  { value: 1650, label: 'LeetCode Rating', suffix: '' },
-  { value: 1000000, label: 'Records Processed', suffix: '+', format: '1M+' },
-  { value: 6, label: 'AI Projects Deployed', suffix: '+' },
-];
 
 export const About: React.FC = () => {
   const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
@@ -40,7 +32,7 @@ export const About: React.FC = () => {
       <div className="max-w-7xl mx-auto relative">
         <SectionTitle
           title="About Me"
-          subtitle="AI Engineer & Full-Stack Developer architecting intelligent systems and scalable architectures."
+          subtitle="AI Engineer building production LLM agents, RAG systems and real-time voice AI."
           glow="blue"
         />
 
@@ -54,10 +46,12 @@ export const About: React.FC = () => {
           <div className="md:col-span-5 relative w-full h-[500px] glass rounded-3xl overflow-hidden group shadow-[0_0_40px_rgba(59,130,246,0.1)]">
             <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-[#000000]/20 to-transparent opacity-80 z-10 pointer-events-none" />
             <img
-              src="/images/About_Me_Portfolio.png"
+              src="/images/About_Me_Portfolio.webp"
+              width={960}
+              height={1005}
               alt="Manan Kumar - AI Engineer"
               className="w-full h-full object-cover object-[center_top] transition-transform duration-1000 group-hover:scale-110"
-              loading="lazy" 
+              loading="lazy"
               decoding="async"
             />
             {/* Floating Gradient Orb behind image */}
@@ -67,18 +61,18 @@ export const About: React.FC = () => {
           {/* Quick Intro Text */}
           <div className="md:col-span-7 space-y-8 pl-0 md:pl-8">
             <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight">
-              I don't just write code. <br />
+              I build AI that ships. <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-400">
-                I architect intelligence.
+                And I measure it.
               </span>
             </h2>
             <p className="text-xl text-secondary leading-relaxed border-l-4 border-primary/30 pl-6">
-              From an early obsession with mathematics to building autonomous AI pipelines at production scale. I am driven by the relentless pursuit of solving complex legacy problems through rigorous engineering.
+              AI Engineer at a fintech startup, where I'm the top contributor to a Hinglish AI assistant for retail savers. I build LLM agents, retrieval (RAG), safety layers and evals in Python and FastAPI, and I judge them by the numbers: accuracy, latency and cost.
             </p>
 
             {/* Quick Badges */}
             <div className="flex flex-wrap gap-3 pt-4">
-              {['Applied AI', 'Agentic Workflows', 'Full-Stack Architecture', 'FinTech Enthusiast'].map(tag => (
+              {['LLM Agents', 'RAG', 'Evals & Guardrails', 'Voice AI', 'FinTech'].map(tag => (
                 <span key={tag} className="px-4 py-2 rounded-full glass border border-white/5 text-secondary text-sm font-medium hover:border-primary/50 transition-colors cursor-default">
                   {tag}
                 </span>
@@ -109,7 +103,7 @@ export const About: React.FC = () => {
                 The First Principles
               </h4>
               <p className="text-white/70 leading-relaxed relative z-10 text-[16px]">
-                For as long as I can remember, my worldview has been shaped by mathematics. To me, equations weren't just numbers—they were the fundamental logic that governed reality. This obsession with deconstructing complex problems culminated in clearing both <span className="text-white font-semibold">JEE Mains and JEE Advanced</span>, securing a top percentile rank among millions. It wasn't just an academic achievement; it was a grueling analytical proving ground that earned my ticket into <span className="text-primary font-medium">Delhi Technological University (DTU)</span>, transitioning my raw affinity for logic into formal engineering discipline.
+                Maths was my first love: the habit of breaking a hard problem into small steps I can check. That habit carried me through <span className="text-white font-semibold">JEE Main (AIR 15,233)</span> and into Software Engineering at <span className="text-primary font-medium">Delhi Technological University (DTU)</span>, and it is still how I debug an AI system today.
               </p>
             </div>
 
@@ -118,10 +112,10 @@ export const About: React.FC = () => {
               <div className="absolute -top-10 -right-10 text-[150px] font-black text-white/[0.02] group-hover:text-primary/[0.05] transition-colors pointer-events-none font-space-grotesk leading-none">02</div>
               <h4 className="text-2xl font-bold text-white mb-4 relative z-10 flex items-center gap-3">
                 <span className="w-2 h-2 rounded-full bg-primary" />
-                The Architect's Playground
+                Learning to Build
               </h4>
               <p className="text-white/70 leading-relaxed relative z-10 text-[16px]">
-                In my early college years, I didn't just want to write code—I wanted to understand how digital ecosystems functioned. While leading cultural societies taught me human dynamics, my late nights were entirely dedicated to mastering <span className="text-white font-semibold">Full-Stack Architecture</span>. I immersed myself in core computer science, learning to build resilient <span className="text-primary font-medium">backend infrastructures</span> and scalable APIs. I began treating software not just as syntax, but as a living mechanism meant to solve real problems at high scale.
+                At DTU I learned to ship whole products, not just solve problems. <span className="text-white font-semibold">400+ LeetCode problems</span> built the fundamentals; side projects taught me the rest: <span className="text-primary font-medium">ShopLens</span>, a visual search engine over 45,000+ products with CLIP and FAISS, and <span className="text-primary font-medium">InvestMate</span>, a full-stack portfolio tracker with Gemini insights.
               </p>
             </div>
 
@@ -130,10 +124,10 @@ export const About: React.FC = () => {
               <div className="absolute -top-10 -right-10 text-[150px] font-black text-white/[0.02] group-hover:text-primary/[0.05] transition-colors pointer-events-none font-space-grotesk leading-none">03</div>
               <h4 className="text-2xl font-bold text-white mb-4 relative z-10 flex items-center gap-3">
                 <span className="w-2 h-2 rounded-full bg-primary" />
-                The Intelligence Paradigm
+                Agents in Production
               </h4>
               <p className="text-white/70 leading-relaxed relative z-10 text-[16px]">
-                Then came the Generative AI revolution. I realized the future wasn't just about hardcoding logic—it was about teaching systems to reason. I aggressively pivoted into <span className="text-white font-semibold">Machine Learning</span>, absorbing advanced concepts and landing a pivotal role at <span className="text-primary font-medium">Internship</span>. Rather than building simple AI wrappers, my expertise solidified in <span className="text-white font-semibold">Agentic Workflows</span>. Today, I architect production-grade, fully autonomous AI pipelines that process millions of records effortlessly.
+                At <span className="text-primary font-medium">IndiaMART</span> I built LangGraph agents for catalog quality, including SARA, a spec-auditing agent run on the live catalog. Now, at a fintech startup, I work on a <span className="text-white font-semibold">Hinglish AI assistant in production</span>: I raised its intent accuracy from 68% to 96%, shipped its tool-calling agent, and built its safety layer and evals.
               </p>
             </div>
 
@@ -142,10 +136,10 @@ export const About: React.FC = () => {
               <div className="absolute -top-10 -right-10 text-[150px] font-black text-white/[0.02] group-hover:text-primary/[0.05] transition-colors pointer-events-none font-space-grotesk leading-none">04</div>
               <h4 className="text-2xl font-bold text-white mb-4 relative z-10 flex items-center gap-3">
                 <span className="w-2 h-2 rounded-full bg-primary" />
-                The Future Horizon
+                What Drives Me
               </h4>
               <p className="text-white/70 leading-relaxed relative z-10 text-[16px]">
-                But code is only half the equation. My true passion lies exactly at the intersection of <span className="text-white font-semibold">Tech, Finance, and Entrepreneurship</span>. I view Artificial Intelligence as the ultimate lever to disrupt legacy bottlenecks and eradicate inefficiencies, particularly within <span className="text-primary font-medium">FinTech</span>. I am on a relentless mission to build high-impact autonomous solutions, and I am highly passionate about connecting with fellow founders, innovators, and visionaries navigating this exact space.
+                I like the place where <span className="text-white font-semibold">AI meets money</span>: high stakes, strict rules, real users. I want systems that are measured, safe and cheap to run. Alongside my job I take on a few <span className="text-primary font-medium">freelance AI projects</span>, and I always enjoy meeting founders and engineers building in AI and fintech.
               </p>
             </div>
           </div>
@@ -159,37 +153,7 @@ export const About: React.FC = () => {
         >
           <SkillsSection />
         </div>
-
-        {/* Stats */}
-        <div 
-          id="about-stats"
-          ref={(el) => { sectionRefs.current['about-stats'] = el; }}
-          className={`grid grid-cols-2 md:grid-cols-4 gap-8 transition-all duration-1000 delay-400 ${isVisible('about-stats') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          {stats.map((stat) => (
-            <StatCard key={stat.label} {...stat} />
-          ))}
-        </div>
       </div>
     </section>
-  );
-};
-
-const StatCard: React.FC<{ value: number; label: string; suffix: string; format?: string }> = ({
-  value,
-  label,
-  suffix,
-  format,
-}) => {
-  const { count, ref } = useCountUp(value, 2);
-
-  return (
-    <div ref={(el) => { if (el) ref.current = el; }} className="glass rounded-xl p-6 text-center hover:glow-blue transition-all duration-300">
-      <div className="text-4xl md:text-5xl font-bold font-space-grotesk text-primary mb-2">
-        {format || count}
-        {suffix}
-      </div>
-      <div className="text-secondary text-sm">{label}</div>
-    </div>
   );
 };

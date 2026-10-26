@@ -1,901 +1,395 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useId, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { testimonials } from '../../data/testimonials';
+import { PageMeta } from '../shared/PageMeta';
+import { motion, useReducedMotion } from 'framer-motion';
+import { FiArrowRight, FiCheck, FiChevronDown, FiMail, FiX } from 'react-icons/fi';
 import {
-  FiCpu, FiMonitor, FiBarChart2, FiZap, FiLayers, FiCode,
-  FiArrowRight, FiCheck, FiStar, FiMessageCircle, FiGitBranch,
-  FiBox, FiTerminal, FiDatabase, FiGlobe, FiTrendingUp, FiShield,
-  FiChevronDown, FiClock, FiUsers, FiAward, FiRefreshCw,
-  FiCodepen, FiMic, FiSliders, FiServer, FiSearch
-} from 'react-icons/fi';
+  servicesHero,
+  proofFigures,
+  proofNote,
+  offers,
+  carePlan,
+  alsoAvailable,
+  everyBuildIncludes,
+  process,
+  dataHandling,
+  limits,
+  faqs,
+  servicesCta,
+} from '../../data/services';
+import type { Offer } from '../../data/services';
 import './Services.css';
 
-/* ─── Service Offerings ─── */
-const services = [
-  {
-    icon: <FiCpu />,
-    title: 'Agentic AI Systems',
-    tagline: 'Autonomous Intelligence at Scale',
-    description: 'End-to-end design and deployment of multi-agent AI architectures. From LangGraph orchestration to recursive skill routing, I build systems that think, decide, and execute autonomously.',
-    deliverables: [
-      'LLM Pipeline Architecture & Prompt Engineering',
-      'Multi-Agent Orchestration (LangGraph, CrewAI)',
-      'RAG Systems with Vector DB Integration',
-      'n8n / Workflow Automation Pipelines',
-      'Production Deployment & Cost Optimization',
-      'Custom Tool-Calling & Function Agents',
-    ],
-    techStack: ['LangGraph', 'OpenAI', 'Gemini', 'FAISS', 'n8n', 'Python'],
-    highlight: 'Built agentic systems processing 17,000+ categories for enterprise clients',
-    color: 'from-blue-500 to-cyan-400',
-    borderColor: 'border-blue-500/30',
-    glowColor: 'shadow-blue-500/20',
-    iconBg: 'bg-blue-500/10',
-    accentText: 'text-blue-400',
-  },
-  {
-    icon: <FiLayers />,
-    title: 'ML Model Integration',
-    tagline: 'From Research to Revenue',
-    description: 'Custom machine learning models trained, fine-tuned, and deployed as production APIs. Specializing in computer vision (CLIP, CNNs), NLP, and recommendation engines.',
-    deliverables: [
-      'Custom Model Training (PyTorch / Scikit-learn)',
-      'CLIP & Vision Embedding Systems',
-      'FAISS Vector Search Implementation',
-      'Real-Time Inference API Deployment',
-      'Model Performance Tuning & Optimization',
-      'Data Pipeline & Feature Engineering',
-    ],
-    techStack: ['PyTorch', 'CLIP', 'FAISS', 'Streamlit', 'FastAPI', 'NumPy'],
-    highlight: 'Built ShopLens: 40k+ item fashion search with sub-second retrieval',
-    color: 'from-purple-500 to-pink-400',
-    borderColor: 'border-purple-500/30',
-    glowColor: 'shadow-purple-500/20',
-    iconBg: 'bg-purple-500/10',
-    accentText: 'text-purple-400',
-  },
-  {
-    icon: <FiMonitor />,
-    title: 'Full-Stack Web Apps',
-    tagline: 'Pixel-Perfect. Performance-Obsessed.',
-    description: 'Modern, responsive web applications built with the MERN stack and Next.js. From PWAs with offline capability to real-time dashboards — I ship fast and I ship beautiful.',
-    deliverables: [
-      'React / Next.js Frontend Development',
-      'Node.js / Express.js Backend APIs',
-      'MongoDB / MySQL / Redis Databases',
-      'JWT Authentication & Role-Based Access',
-      'PWA Architecture & Offline-First Design',
-      'Vercel / Render / AWS Deployment',
-    ],
-    techStack: ['React', 'Next.js', 'Node.js', 'MongoDB', 'Tailwind', 'TypeScript'],
-    highlight: 'NeoFin PWA: AI-powered finance tracker with voice commands',
-    color: 'from-cyan-500 to-emerald-400',
-    borderColor: 'border-cyan-500/30',
-    glowColor: 'shadow-cyan-500/20',
-    iconBg: 'bg-cyan-500/10',
-    accentText: 'text-cyan-400',
-  },
-  {
-    icon: <FiBarChart2 />,
-    title: 'AI-Powered Dashboards',
-    tagline: 'Data That Tells Stories',
-    description: 'Interactive, real-time dashboards with AI-powered analytics. Transform raw data into actionable intelligence with stunning visualizations and automated insights.',
-    deliverables: [
-      'Real-Time Data Visualization (Chart.js / Recharts)',
-      'Live API Integration & WebSocket Feeds',
-      'KPI Tracking & Business Metrics',
-      'Custom Analytics & Reporting',
-      'AI-Generated Insights & Summaries',
-      'Export & Sharing Capabilities',
-    ],
-    techStack: ['React', 'Chart.js', 'Recharts', 'D3.js', 'WebSocket', 'Power BI'],
-    highlight: 'Skill Dashboard: 1,300+ AI skills with real-time analytics',
-    color: 'from-amber-500 to-orange-400',
-    borderColor: 'border-amber-500/30',
-    glowColor: 'shadow-amber-500/20',
-    iconBg: 'bg-amber-500/10',
-    accentText: 'text-amber-400',
-  },
-  {
-    icon: <FiCodepen />,
-    title: 'High-End 3D Web Experiences',
-    tagline: 'Immersive Design Meets Performance',
-    description: 'Bespoke, cinematic website development blending 3D models with buttery-smooth interactions. I build award-winning frontends that captivate users while maintaining perfect lighthouse scores.',
-    deliverables: [
-      'Interactive 3D Environments (Three.js/Spline)',
-      'GSAP & Framer Motion Animations',
-      'Custom Shader Programming (GLSL)',
-      'Performant WebGL Pipelines',
-      'Scroll-Driven Storytelling',
-      'Responsive Enterprise UI/UX Design',
-    ],
-    techStack: ['Three.js', 'Spline', 'GSAP', 'Framer Motion', 'React', 'WebGL'],
-    highlight: 'Engineered cinematic portfolio with 60FPS WebGL object physics',
-    color: 'from-rose-500 to-red-400',
-    borderColor: 'border-rose-500/30',
-    glowColor: 'shadow-rose-500/20',
-    iconBg: 'bg-rose-500/10',
-    accentText: 'text-rose-400',
-  },
-  {
-    icon: <FiMic />,
-    title: 'Voice Bots & Conversational AI',
-    tagline: 'Interfaces That Speak',
-    description: 'Next-generation AI assistants capable of real-time voice synthesis and deep reasoning. I design conversational agents for customer support, sales qualification, and interactive coaching.',
-    deliverables: [
-      'Real-Time Voice Streaming APIs',
-      'Text-to-Speech (ElevenLabs/OpenAI)',
-      'Dynamic Context & Memory Retention',
-      'Omnichannel Integration (WhatsApp, Web, Telephony)',
-      'Intent Recognition & Sentiment Analysis',
-      'Custom Persona & Tone Engineering',
-    ],
-    techStack: ['ElevenLabs', 'Twilio', 'OpenAI Realtime', 'WebRTC', 'VAPI', 'Bland AI'],
-    highlight: 'Deployed NeoFin voice-command logic for hands-free finance tracking',
-    color: 'from-indigo-500 to-blue-500',
-    borderColor: 'border-indigo-500/30',
-    glowColor: 'shadow-indigo-500/20',
-    iconBg: 'bg-indigo-500/10',
-    accentText: 'text-indigo-400',
-  },
-  {
-    icon: <FiSliders />,
-    title: 'Enterprise Workflow Automation',
-    tagline: 'Connect. Automate. Scale.',
-    description: 'Eliminating manual data entry and operational bottlenecks through custom automation pipelines. I connect disjointed SaaS tools to create a unified, highly efficient business engine.',
-    deliverables: [
-      'n8n & Zapier Custom Pipelines',
-      'CRM API Integrations (HubSpot/Salesforce)',
-      'Automated Sales & Lead Routing',
-      'AI-Powered Email Parsing',
-      'Slack & Discord Notification Bots',
-      'Internal Tooling & Admin Panels',
-    ],
-    techStack: ['n8n', 'Zapier', 'Python', 'Node.js', 'REST APIs', 'Webhooks'],
-    highlight: 'Saved marketing agencies 40+ hours/week by automating lead qualification',
-    color: 'from-fuchsia-500 to-pink-500',
-    borderColor: 'border-fuchsia-500/30',
-    glowColor: 'shadow-fuchsia-500/20',
-    iconBg: 'bg-fuchsia-500/10',
-    accentText: 'text-fuchsia-400',
-  },
-  {
-    icon: <FiServer />,
-    title: 'Cloud Infrastructure & DevOps',
-    tagline: 'Resilient. Scalable. Secure.',
-    description: 'Designing and managing robust cloud environments. From zero-downtime CI/CD pipelines to AWS cost optimization, I ensure your applications can handle sudden hyperscaling without breaking.',
-    deliverables: [
-      'Docker Containerization',
-      'Automated CI/CD (GitHub Actions)',
-      'Database Migration & Scaling',
-      'AWS / Vercel Architecture Setup',
-      'Uptime Monitoring & Alerts',
-      'Cloud Cost Optimization',
-    ],
-    techStack: ['Docker', 'AWS', 'Vercel', 'GitHub Actions', 'PostgreSQL', 'Redis'],
-    highlight: 'Deployed zero-downtime infrastructure for global portfolio delivery',
-    color: 'from-teal-500 to-emerald-500',
-    borderColor: 'border-teal-500/30',
-    glowColor: 'shadow-teal-500/20',
-    iconBg: 'bg-teal-500/10',
-    accentText: 'text-teal-400',
-  },
-  {
-    icon: <FiSearch />,
-    title: 'Applied RAG & Enterprise Search',
-    tagline: 'Unlocking Organizational Knowledge',
-    description: 'Building secure, local Retrieval-Augmented Generation engines. I allow your workforce to instantly search and chat with decades of PDF documents, wikis, and internal databases securely.',
-    deliverables: [
-      'Vector Database Architecture',
-      'Document Parsing & Chunking Strategies',
-      'FAISS / Pinecone Integration',
-      'LLM Output Grounding & Hallucination Defense',
-      'Secure Enterprise Authentication',
-      'Multi-Modal Search (Text/Images)',
-    ],
-    techStack: ['FAISS', 'Pinecone', 'LangChain', 'OpenAI', 'Python', 'pgvector'],
-    highlight: 'Engineered high-accuracy semantic search capable of extracting tabular data',
-    color: 'from-yellow-500 to-amber-500',
-    borderColor: 'border-yellow-500/30',
-    glowColor: 'shadow-yellow-500/20',
-    iconBg: 'bg-yellow-500/10',
-    accentText: 'text-yellow-400',
-  },
-];
+const CASE_STUDY_PATH = '/case-study/hinglish-assistant';
 
-/* ─── Process Steps ─── */
-const processSteps = [
-  {
-    phase: '01',
-    title: 'Discovery',
-    subtitle: 'Understanding Your Vision',
-    description: 'Deep-dive into your business goals, technical requirements, and user needs. I map out the problem space before writing a single line of code.',
-    icon: <FiMessageCircle />,
-    duration: '1–2 Days',
-  },
-  {
-    phase: '02',
-    title: 'Architecture',
-    subtitle: 'Blueprint & Strategy',
-    description: 'System design, tech stack selection, database modeling, and API architecture. You get a clear technical roadmap before development begins.',
-    icon: <FiGitBranch />,
-    duration: '2–3 Days',
-  },
-  {
-    phase: '03',
-    title: 'Build',
-    subtitle: 'Code, Test, Iterate',
-    description: 'Agile development sprints with daily updates. Clean, documented, production-grade code. Continuous integration and automated testing.',
-    icon: <FiTerminal />,
-    duration: 'Sprint-Based',
-  },
-  {
-    phase: '04',
-    title: 'Deploy',
-    subtitle: 'Launch & Scale',
-    description: 'Production deployment with CI/CD pipelines, monitoring, and performance optimization. I don\'t disappear after delivery — ongoing support included.',
-    icon: <FiGlobe />,
-    duration: 'Ongoing',
-  },
-];
+const mailto = (subject: string) =>
+  `mailto:${servicesCta.email}?subject=${encodeURIComponent(subject)}`;
 
-/* ─── Stats ─── */
-const stats = [
-  { value: '6+', label: 'Projects Shipped', icon: <FiBox /> },
-  { value: '98%', label: 'Accuracy Achieved', icon: <FiTrendingUp /> },
-  { value: '17K+', label: 'Categories Processed', icon: <FiDatabase /> },
-  { value: '<70ms', label: 'API Response Time', icon: <FiZap /> },
-];
+/* ─── Scroll reveal (disabled under prefers-reduced-motion) ─── */
+const Reveal: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}> = ({ children, className, delay = 0 }) => {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className={className}>{children}</div>;
+  return (
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.05 }}
+      transition={{ duration: 0.6, delay, ease: 'easeOut' }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
-/* ─── Tech Arsenal ─── */
-const techCategories = [
-  {
-    category: 'AI / LLM',
-    techs: ['LangGraph', 'CrewAI', 'OpenAI API', 'Gemini API', 'Claude API', 'RAG Pipelines', 'FAISS', 'CLIP', 'PyTorch', 'Scikit-learn', 'Hugging Face', 'Prompt Engineering', 'LLM Fine-Tuning', 'Vector Databases', 'Embeddings'],
-  },
-  {
-    category: 'Frontend',
-    techs: ['React.js', 'Next.js', 'TypeScript', 'JavaScript ES6+', 'Tailwind CSS', 'HTML5 / CSS3', 'Three.js', 'Framer Motion', 'Responsive Design', 'PWA', 'Vite', 'Webpack'],
-  },
-  {
-    category: 'Backend',
-    techs: ['Node.js', 'Express.js', 'FastAPI', 'Python', 'REST APIs', 'GraphQL', 'WebSocket', 'JWT Auth', 'OAuth 2.0', 'Middleware Design', 'Microservices', 'Serverless'],
-  },
-  {
-    category: 'Data & DevOps',
-    techs: ['MongoDB', 'MySQL', 'PostgreSQL', 'Redis', 'Firebase', 'Supabase', 'Vercel', 'Render', 'Docker', 'Git / GitHub', 'CI/CD', 'n8n', 'Power BI', 'AWS S3'],
-  },
-];
+const SectionHead: React.FC<{
+  id: string;
+  label: string;
+  title: string;
+  accent?: string;
+}> = ({ id, label, title, accent = 'text-primary' }) => (
+  <div className="text-center mb-10 md:mb-14">
+    <span className={`${accent} text-xs md:text-sm font-medium uppercase tracking-[0.3em] mb-3 block`}>
+      {label}
+    </span>
+    <h2 id={id} className="text-3xl md:text-5xl font-bold font-space-grotesk text-white">
+      {title}
+    </h2>
+  </div>
+);
 
-/* ─── FAQs ─── */
-const faqs = [
-  {
-    question: 'What types of projects do you take on?',
-    answer: 'I specialize in architecting Agentic AI systems (LangGraph), Full-Stack Enterprise Web Apps (MERN/Next.js/React), production-grade ML models, and interactive real-time dashboards. If it bridges intelligent logic with exceptional UX, I build it.',
-  },
-  {
-    question: 'How do you handle project communication?',
-    answer: 'I integrate seamlessly into your workflow. Expect concise daily async updates via Slack/Email outlining code shipped and obstacles cleared, supplemented by weekly strategic syncs to align on milestone delivery.',
-  },
-  {
-    question: 'Do you provide source code and documentation?',
-    answer: 'Yes, 100% intellectual property ownership transfers to you immediately upon delivery. Every project ships with highly readable, modularized code, extensive inline documentation, and comprehensive architectural READMEs.',
-  },
-  {
-    question: 'What\'s your typical turnaround time?',
-    answer: 'Precision meets velocity. Landing pages and direct API integrations deliver in 3–5 days. Minimum Viable Products (MVPs) launch in 2–4 weeks. Complex Enterprise AI integration cycles typically run 4–8 weeks.',
-  },
-  {
-    question: 'Do you offer post-delivery support?',
-    answer: 'Absolutely. Every production deployment includes a complimentary 2-week hypercare period for immediate performance tuning and bug resolution. Ongoing SLA-based maintenance retainers are also available.',
-  },
-  {
-    question: 'Can you work with my existing codebase?',
-    answer: 'Definitely. I regularly parachute into existing codebases to refactor legacy architectures, scale performance bottlenecks, or inject advanced AI capabilities like vector Search and RAG seamlessly into your live environment.',
-  },
-];
+const primaryBtn =
+  'inline-flex items-center justify-center gap-2 min-h-[48px] px-7 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black';
+const secondaryBtn =
+  'inline-flex items-center justify-center gap-2 min-h-[48px] px-7 py-3 rounded-xl border border-white/20 text-white hover:bg-white/10 font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black';
 
+/* ─── Offer card ─── */
+const OfferCard: React.FC<{ offer: Offer }> = ({ offer }) => {
+  const fromPrefix = offer.price.startsWith('from ');
+  const priceMain = fromPrefix ? offer.price.slice(5) : offer.price;
+  return (
+    <article
+      className={`glass rounded-2xl p-6 flex flex-col h-full transition-colors duration-300 ${
+        offer.highlight
+          ? 'border-primary/50 bg-primary/5 shadow-[0_0_30px_rgba(59,130,246,0.12)]'
+          : 'hover:border-white/20'
+      }`}
+    >
+      <h3 className="text-xl font-bold font-space-grotesk text-white mb-2">{offer.name}</h3>
+      <p className="text-white/70 text-sm leading-relaxed mb-5">{offer.forWho}</p>
+
+      <div className="mb-1 flex items-baseline gap-2">
+        {fromPrefix && <span className="text-white/70 text-sm">from</span>}
+        <span className="text-3xl md:text-4xl font-bold font-space-grotesk text-white">{priceMain}</span>
+      </div>
+      {offer.priceNote && <p className="text-white/70 text-xs mb-1">{offer.priceNote}</p>}
+      <p className="text-cyan-300 text-xs uppercase tracking-wider font-medium mb-5">{offer.timeline}</p>
+
+      <ul className="space-y-3 mb-5 flex-1">
+        {offer.includes.map((item) => (
+          <li key={item} className="flex items-start gap-2.5 text-sm text-white/80">
+            <FiCheck className="text-primary mt-0.5 flex-shrink-0" aria-hidden="true" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+
+      {offer.notIncluded && (
+        <p className="text-white/60 text-xs mb-5 flex items-start gap-2">
+          <FiX className="mt-0.5 flex-shrink-0" aria-hidden="true" />
+          <span>Not included: {offer.notIncluded}</span>
+        </p>
+      )}
+
+      <a
+        href={mailto(`${offer.name} enquiry`)}
+        className={`${offer.highlight ? primaryBtn : secondaryBtn} w-full text-center`}
+      >
+        {offer.cta}
+        <FiArrowRight aria-hidden="true" />
+      </a>
+    </article>
+  );
+};
+
+/* ─── FAQ accordion item ─── */
+const FaqItem: React.FC<{ q: string; a: string }> = ({ q, a }) => {
+  const [open, setOpen] = useState(false);
+  const uid = useId();
+  const btnId = `${uid}-btn`;
+  const panelId = `${uid}-panel`;
+  return (
+    <div
+      className={`glass rounded-2xl border transition-colors duration-300 ${
+        open ? 'border-primary/40' : 'border-white/10 hover:border-white/20'
+      }`}
+    >
+      <h3>
+        <button
+          id={btnId}
+          type="button"
+          aria-expanded={open}
+          aria-controls={panelId}
+          onClick={() => setOpen((v) => !v)}
+          className="w-full min-h-[56px] flex items-center justify-between gap-4 px-5 md:px-6 py-4 text-left cursor-pointer rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        >
+          <span className="text-white font-medium text-base">{q}</span>
+          <FiChevronDown
+            className={`text-primary flex-shrink-0 transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
+            size={20}
+            aria-hidden="true"
+          />
+        </button>
+      </h3>
+      <div id={panelId} role="region" aria-labelledby={btnId} hidden={!open}>
+        <p className="px-5 md:px-6 pb-5 text-white/75 text-sm md:text-base leading-relaxed">{a}</p>
+      </div>
+    </div>
+  );
+};
 
 /* ─── MAIN COMPONENT ─── */
 export const Services: React.FC = () => {
-  const [activeService, setActiveService] = useState(0);
-  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
-  // Intersection Observer for scroll animations
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisibleSections((prev) => new Set([...prev, entry.target.id]));
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-    );
-
-    Object.values(sectionRefs.current).forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
-  const isVisible = (id: string) => visibleSections.has(id);
-
   return (
-    <section id="services" className="pt-32 pb-20 px-6 relative z-20 overflow-hidden">
-      {/* ─── Ambient Background ─── */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <>
+    <PageMeta
+      title="AI Assistants, RAG Agents & Automation — Services | Manan Kumar"
+      description="Fixed-scope freelance AI builds: automate one workflow from $1,200, a custom AI assistant or RAG agent from $3,500, a production-grade agent from $8,000. Test set agreed up front."
+      path="/services"
+    />
+    <section id="services" className="pt-28 md:pt-32 pb-16 md:pb-20 px-5 md:px-6 relative z-20 overflow-hidden svc-page">
+      {/* Ambient background */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-[100px]" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-cyan-500/3 rounded-full blur-[150px]" />
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
+        {/* ═════════ 1. HERO ═════════ */}
+        <Reveal className="text-center mb-14 md:mb-20">
+          <p className="text-cyan-300 text-xs md:text-sm font-medium uppercase tracking-[0.3em] mb-5">
+            {servicesHero.eyebrow}
+          </p>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-space-grotesk leading-[1.05] max-w-4xl mx-auto mb-6 bg-gradient-to-r from-white via-blue-200 to-cyan-300 bg-clip-text text-transparent">
+            {servicesHero.title}
+          </h1>
+          <p className="text-white/75 text-base md:text-xl max-w-3xl mx-auto mb-7 leading-relaxed">
+            {servicesHero.subtitle}
+          </p>
 
-        {/* ════════════════════════════════════════════
-            HERO SECTION
-           ════════════════════════════════════════════ */}
-        <div
-          id="svc-hero"
-          ref={(el) => { sectionRefs.current['svc-hero'] = el; }}
-          className={`text-center mb-24 transition-all duration-1000 ${isVisible('svc-hero') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          {/* Availability */}
           <div className="flex justify-center mb-8">
-            <div className="glass px-6 py-3 rounded-full flex items-center gap-3 border border-green-500/20">
-              <span className="pulse-dot" />
-              <span className="text-green-400 font-medium text-sm tracking-wide uppercase">
-                Open for Freelance & Internships
+            <div className="glass px-5 py-2.5 rounded-full flex items-center border border-green-500/20 max-w-full">
+              <span className="pulse-dot flex-shrink-0" aria-hidden="true" />
+              <span className="text-green-300 font-medium text-xs md:text-sm tracking-wide text-left">
+                {servicesHero.capacity}
               </span>
             </div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold font-space-grotesk text-white mb-6 leading-[0.95]">
-            I build systems that
-            <br />
-            <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">
-              think & ship.
-            </span>
-          </h1>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 max-w-md sm:max-w-none mx-auto">
+            <a href={mailto('A task I’d like automated')} className={primaryBtn}>
+              <FiMail aria-hidden="true" />
+              Email me a task
+            </a>
+            <Link to={CASE_STUDY_PATH} className={secondaryBtn}>
+              See the case study
+              <FiArrowRight aria-hidden="true" />
+            </Link>
+          </div>
+        </Reveal>
 
-          <p className="text-secondary text-lg md:text-xl max-w-3xl mx-auto mb-10 leading-relaxed">
-            From agentic AI pipelines to full-stack web applications — I engineer
-            production-grade solutions that solve real problems. No templates. No shortcuts.
-            Pure engineering.
-          </p>
-
-          {/* Quick Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
-            {stats.map((stat) => (
+        {/* ═════════ 2. PROOF STRIP ═════════ */}
+        <Reveal className="mb-16 md:mb-24">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4" role="list">
+            {proofFigures.map((fig) => (
               <div
-                key={stat.label}
-                className="glass rounded-2xl p-6 border border-white/5 hover:border-primary/30 transition-all duration-300 group"
+                key={fig.label}
+                role="listitem"
+                className="glass rounded-2xl p-4 md:p-6 text-center hover:border-primary/30 transition-colors duration-300"
               >
-                <div className="text-primary text-xl mb-2 group-hover:scale-110 transition-transform">{stat.icon}</div>
-                <div className="text-3xl md:text-4xl font-bold font-space-grotesk text-white mb-1">{stat.value}</div>
-                <div className="text-secondary text-xs uppercase tracking-wider">{stat.label}</div>
+                <div className="text-2xl md:text-3xl font-bold font-space-grotesk bg-gradient-to-r from-blue-300 to-cyan-300 bg-clip-text text-transparent mb-2 break-words">
+                  {fig.value}
+                </div>
+                <div className="text-white/75 text-xs md:text-sm leading-snug">{fig.label}</div>
               </div>
             ))}
           </div>
-        </div>
-
-
-        {/* ════════════════════════════════════════════
-            SERVICE OFFERINGS — INTERACTIVE TABS
-           ════════════════════════════════════════════ */}
-        <div
-          id="svc-offerings"
-          ref={(el) => { sectionRefs.current['svc-offerings'] = el; }}
-          className={`mb-32 transition-all duration-1000 delay-200 ${isVisible('svc-offerings') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          <div className="text-center mb-16">
-            <span className="text-primary text-sm font-medium uppercase tracking-[0.3em] mb-4 block">What I Offer</span>
-            <h2 className="text-4xl md:text-5xl font-bold font-space-grotesk text-white">
-              Services & Expertise
-            </h2>
-          </div>
-
-          {/* Tab Navigation */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {services.map((service, index) => (
-              <button
-                key={service.title}
-                onClick={() => setActiveService(index)}
-                className={`group flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer
-                  ${activeService === index
-                    ? `bg-gradient-to-r ${service.color} text-white shadow-lg ${service.glowColor}`
-                    : 'glass text-secondary hover:text-white hover:border-white/20'
-                  }`}
-              >
-                <span className="text-lg">{service.icon}</span>
-                <span className="hidden sm:inline">{service.title}</span>
-              </button>
-            ))}
-          </div>
-
-          {/* Active Service Detail */}
-          {services.map((service, index) => (
-            <div
-              key={service.title}
-              className={`transition-all duration-500 ${activeService === index ? 'block' : 'hidden'}`}
+          <p className="text-white/70 text-sm text-center mt-5 max-w-2xl mx-auto">
+            {proofNote}{' '}
+            <Link
+              to={CASE_STUDY_PATH}
+              className="inline-flex items-center gap-1 min-h-[44px] text-primary hover:underline font-medium"
             >
-              <div className="glass rounded-3xl overflow-hidden border border-white/5">
-                <div className="grid lg:grid-cols-5 gap-0">
+              Read the case study
+              <FiArrowRight aria-hidden="true" />
+            </Link>
+          </p>
+        </Reveal>
 
-                  {/* Left Panel — Info */}
-                  <div className="lg:col-span-3 p-8 md:p-12">
-                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full ${service.iconBg} ${service.accentText} text-sm font-medium mb-6`}>
-                      {service.icon}
-                      {service.tagline}
-                    </div>
-
-                    <h3 className="text-3xl md:text-4xl font-bold font-space-grotesk text-white mb-4">
-                      {service.title}
-                    </h3>
-
-                    <p className="text-secondary text-base leading-relaxed mb-8 max-w-xl">
-                      {service.description}
-                    </p>
-
-                    {/* Highlight Badge */}
-                    <div className={`glass rounded-xl p-4 mb-8 border ${service.borderColor}`}>
-                      <div className="flex items-start gap-3">
-                        <FiZap className={`${service.accentText} mt-1 flex-shrink-0`} />
-                        <p className={`text-sm ${service.accentText} font-medium`}>
-                          {service.highlight}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Tech Stack Pills */}
-                    <div className="flex flex-wrap gap-2">
-                      {service.techStack.map((tech) => (
-                        <span
-                          key={tech}
-                          className="text-xs uppercase tracking-wider px-3 py-1.5 rounded-full bg-white/5 text-secondary border border-white/10 font-medium"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Right Panel — Deliverables */}
-                  <div className="lg:col-span-2 bg-white/[0.02] border-t lg:border-t-0 lg:border-l border-white/5 p-8 md:p-12">
-                    <h4 className="text-sm uppercase tracking-[0.2em] text-secondary mb-6 font-medium">
-                      What's Included
-                    </h4>
-                    <ul className="space-y-4">
-                      {service.deliverables.map((item, i) => (
-                        <li
-                          key={item}
-                          className="flex items-start gap-3 text-sm text-white/80 group/item"
-                          style={{ animationDelay: `${i * 80}ms` }}
-                        >
-                          <FiCheck className={`${service.accentText} mt-0.5 flex-shrink-0`} />
-                          <span className="group-hover/item:text-white transition-colors">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="mt-8 pt-6 border-t border-white/5">
-                      <Link
-                        to="/contact"
-                        className={`inline-flex items-center gap-2 text-sm font-medium ${service.accentText} hover:underline group/link`}
-                      >
-                        Discuss This Service
-                        <FiArrowRight className="group-hover/link:translate-x-1 transition-transform" />
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        {/* ═════════ 3. OFFERS ═════════ */}
+        <section aria-labelledby="svc-offers-h" className="mb-16 md:mb-24">
+          <SectionHead id="svc-offers-h" label="What I offer" title="Fixed-scope builds, priced up front" />
+          <Reveal>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-5">
+              {offers.map((offer) => (
+                <OfferCard key={offer.id} offer={offer} />
+              ))}
             </div>
-          ))}
-        </div>
 
+            <div className="glass rounded-2xl mt-4 md:mt-5 p-5 md:p-6 flex flex-col md:flex-row md:items-center gap-2 md:gap-6">
+              <h3 className="text-lg font-bold font-space-grotesk text-white md:whitespace-nowrap">
+                {carePlan.name}
+                <span className="text-cyan-300 font-medium text-base ml-3">{carePlan.price}</span>
+              </h3>
+              <p className="text-white/75 text-sm leading-relaxed">{carePlan.description}</p>
+            </div>
+          </Reveal>
+        </section>
 
-        {/* ════════════════════════════════════════════
-            MY PROCESS — TIMELINE
-           ════════════════════════════════════════════ */}
-        <div
-          id="svc-process"
-          ref={(el) => { sectionRefs.current['svc-process'] = el; }}
-          className={`mb-32 transition-all duration-1000 delay-300 ${isVisible('svc-process') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          <div className="text-center mb-16">
-            <span className="text-cyan-400 text-sm font-medium uppercase tracking-[0.3em] mb-4 block">How I Work</span>
-            <h2 className="text-4xl md:text-5xl font-bold font-space-grotesk text-white">
-              From Idea to Production
-            </h2>
-          </div>
+        {/* ═════════ 4. EVERY BUILD INCLUDES ═════════ */}
+        <section aria-labelledby="svc-every-h" className="mb-16 md:mb-24">
+          <SectionHead id="svc-every-h" label="Standard" title="Every build includes" accent="text-purple-300" />
+          <Reveal>
+            <ul className="grid sm:grid-cols-2 gap-3 max-w-4xl mx-auto">
+              {everyBuildIncludes.map((item) => (
+                <li key={item} className="glass rounded-xl p-4 flex items-start gap-3 text-sm md:text-base text-white/85">
+                  <FiCheck className="text-green-400 mt-1 flex-shrink-0" aria-hidden="true" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
+        </section>
 
-          <div className="grid md:grid-cols-4 gap-6 relative">
-            {/* Connector Line */}
-            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent -translate-y-1/2 z-0" />
-
-            {processSteps.map((step, index) => (
-              <div
-                key={step.phase}
-                className="relative z-10 group"
-                style={{ transitionDelay: `${index * 150}ms` }}
-              >
-                <div className="glass rounded-2xl p-8 border border-white/5 hover:border-primary/30 transition-all duration-500 hover:-translate-y-2 h-full">
-                  {/* Phase Number */}
-                  <div className="flex items-center justify-between mb-6">
-                    <span className="text-5xl font-bold font-space-grotesk text-white/5 group-hover:text-primary/20 transition-colors">
-                      {step.phase}
-                    </span>
-                    <span className="text-primary text-xl group-hover:scale-110 transition-transform">
-                      {step.icon}
-                    </span>
-                  </div>
-
-                  <h4 className="text-xl font-bold font-space-grotesk text-white mb-1">
-                    {step.title}
-                  </h4>
-                  <p className="text-primary text-xs uppercase tracking-wider mb-4 font-medium">
-                    {step.subtitle}
-                  </p>
-                  <p className="text-secondary text-sm leading-relaxed mb-4">
-                    {step.description}
-                  </p>
-
-                  <div className="mt-auto">
-                    <span className="text-xs text-secondary bg-white/5 px-3 py-1 rounded-full">
-                      ⏱ {step.duration}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-
-        {/* ════════════════════════════════════════════
-            TECH ARSENAL
-           ════════════════════════════════════════════ */}
-        <div
-          id="svc-tech"
-          ref={(el) => { sectionRefs.current['svc-tech'] = el; }}
-          className={`mb-32 transition-all duration-1000 delay-300 ${isVisible('svc-tech') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          <div className="text-center mb-16">
-            <span className="text-purple-400 text-sm font-medium uppercase tracking-[0.3em] mb-4 block">Tech Stack</span>
-            <h2 className="text-4xl md:text-5xl font-bold font-space-grotesk text-white">
-              Battle-Tested Arsenal
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {techCategories.map((cat) => (
-              <div key={cat.category} className="glass rounded-2xl p-6 border border-white/5 hover:border-primary/20 transition-all duration-300">
-                <h4 className="text-sm uppercase tracking-[0.2em] text-primary mb-5 font-bold">
-                  {cat.category}
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {cat.techs.map((tech) => (
+        {/* ═════════ 5. PROCESS ═════════ */}
+        <section aria-labelledby="svc-process-h" className="mb-16 md:mb-24">
+          <SectionHead id="svc-process-h" label="How it works" title="From first email to handover" accent="text-cyan-300" />
+          <Reveal>
+            <div className="relative">
+            <div
+              className="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent -translate-y-1/2 z-0"
+              aria-hidden="true"
+            />
+            <ol className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 relative list-none p-0">
+              {process.map((p, i) => (
+                <li key={p.step} className="relative z-10 group">
+                  <div className="glass rounded-2xl p-6 md:p-7 hover:border-primary/30 transition-colors duration-500 h-full">
                     <span
-                      key={tech}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-white/5 text-white/70 border border-white/8 hover:border-primary/40 hover:text-white transition-all duration-200 cursor-default"
+                      className="block text-5xl font-bold font-space-grotesk text-white/10 group-hover:text-primary/30 transition-colors mb-3"
+                      aria-hidden="true"
                     >
-                      {tech}
+                      {String(i + 1).padStart(2, '0')}
                     </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-
-        {/* ════════════════════════════════════════════
-            TESTIMONIALS — SOCIAL PROOF
-           ════════════════════════════════════════════ */}
-        <div
-          id="svc-testimonials"
-          ref={(el) => { sectionRefs.current['svc-testimonials'] = el; }}
-          className={`mb-32 transition-all duration-1000 delay-300 ${isVisible('svc-testimonials') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          <div className="text-center mb-16">
-            <span className="text-amber-400 text-sm font-medium uppercase tracking-[0.3em] mb-4 block">Social Proof</span>
-            <h2 className="text-4xl md:text-5xl font-bold font-space-grotesk text-white">
-              What People Say
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="glass rounded-2xl p-8 border border-white/5 hover:border-primary/20 transition-all duration-500 relative group overflow-hidden"
-              >
-                {/* Decorative Quote */}
-                <div className="absolute -top-4 -left-2 text-8xl font-serif text-primary/10 pointer-events-none select-none group-hover:text-primary/20 transition-colors">"</div>
-
-                {/* Stars */}
-                <div className="flex gap-1 mb-4 relative z-10">
-                  {Array.from({ length: testimonial.rating }).map((_, i) => (
-                    <FiStar key={i} className="text-amber-400 fill-amber-400" size={14} />
-                  ))}
-                </div>
-
-                <p className="text-white/80 leading-relaxed mb-6 relative z-10 text-sm md:text-base">
-                  "{testimonial.quote}"
-                </p>
-
-                <div className="flex items-center gap-4 relative z-10">
-                  {/* Avatar placeholder */}
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-purple-500 flex items-center justify-center text-white font-bold text-sm">
-                    {testimonial.author.charAt(0)}
+                    <h3 className="text-lg font-bold font-space-grotesk text-white mb-2">{p.step}</h3>
+                    <p className="text-white/75 text-sm leading-relaxed">{p.detail}</p>
                   </div>
-                  <div>
-                    <p className="text-white font-medium text-sm">{testimonial.author}</p>
-                    <p className="text-primary text-xs">{testimonial.role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-
-        {/* ════════════════════════════════════════════
-            WHY WORK WITH ME
-           ════════════════════════════════════════════ */}
-        <div
-          id="svc-why"
-          ref={(el) => { sectionRefs.current['svc-why'] = el; }}
-          className={`mb-32 transition-all duration-1000 delay-300 ${isVisible('svc-why') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          <div className="text-center mb-16">
-            <span className="text-green-400 text-sm font-medium uppercase tracking-[0.3em] mb-4 block">The Difference</span>
-            <h2 className="text-4xl md:text-5xl font-bold font-space-grotesk text-white">
-              Why Work With Me
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                icon: <FiCode />,
-                title: 'No Template Engineering',
-                description: 'Every line of code is purpose-built for your use case. I don\'t recycle boilerplate — I architect custom solutions that scale.',
-                accent: 'text-blue-400',
-              },
-              {
-                icon: <FiShield />,
-                title: 'Production-Grade From Day 1',
-                description: 'Error handling, edge cases, security — baked in from the start. Not bolted on as an afterthought. Your system ships battle-ready.',
-                accent: 'text-purple-400',
-              },
-              {
-                icon: <FiZap />,
-                title: 'AI-Native Thinking',
-                description: 'I don\'t just use AI — I build AI systems. From LangGraph agents to CLIP embeddings, I bring deep AI fluency to every project.',
-                accent: 'text-cyan-400',
-              },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="glass rounded-2xl p-8 border border-white/5 hover:border-primary/20 transition-all duration-300 group hover:-translate-y-1"
-              >
-                <div className={`text-3xl ${item.accent} mb-4 group-hover:scale-110 transition-transform`}>
-                  {item.icon}
-                </div>
-                <h4 className="text-lg font-bold font-space-grotesk text-white mb-3">
-                  {item.title}
-                </h4>
-                <p className="text-secondary text-sm leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-
-        {/* ════════════════════════════════════════════
-            TRUST SIGNALS
-           ════════════════════════════════════════════ */}
-        <div
-          id="svc-trust"
-          ref={(el) => { sectionRefs.current['svc-trust'] = el; }}
-          className={`mb-32 transition-all duration-1000 delay-300 ${isVisible('svc-trust') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { icon: <FiClock />, value: '< 24h', label: 'Response Time' },
-              { icon: <FiRefreshCw />, value: '2 Weeks', label: 'Free Bug-Fix Support' },
-              { icon: <FiUsers />, value: '100%', label: 'Code Ownership' },
-              { icon: <FiAward />, value: 'Daily', label: 'Progress Updates' },
-            ].map((trust) => (
-              <div key={trust.label} className="text-center p-6 glass rounded-2xl border border-white/5 hover:border-green-500/20 transition-all duration-300 group">
-                <div className="text-green-400 text-2xl mb-3 group-hover:scale-110 transition-transform mx-auto flex justify-center">{trust.icon}</div>
-                <div className="text-2xl font-bold font-space-grotesk text-white mb-1">{trust.value}</div>
-                <div className="text-secondary text-xs uppercase tracking-wider">{trust.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-
-        {/* ════════════════════════════════════════════
-            CONSULTING TIERS — MONETIZATION ANCHOR
-           ════════════════════════════════════════════ */}
-        <div
-          id="svc-tiers"
-          ref={(el) => { sectionRefs.current['svc-tiers'] = el; }}
-          className={`mb-32 transition-all duration-1000 delay-300 ${isVisible('svc-tiers') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          <div className="text-center mb-16">
-            <span className="text-emerald-400 text-sm font-medium uppercase tracking-[0.3em] mb-4 block">Productized Engagements</span>
-            <h2 className="text-4xl md:text-5xl font-bold font-space-grotesk text-white">
-              Consulting Tiers
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="glass rounded-2xl p-8 border border-white/5 hover:border-emerald-500/30 transition-all duration-300 flex flex-col group">
-              <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2">System Architecture Audit</h3>
-              <p className="text-emerald-400 font-mono mb-6">Fixed Fee <span className="text-secondary text-base">/ scoping</span></p>
-              <ul className="space-y-3 mb-8 flex-1">
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> 1-on-1 Discovery Deep Dive</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> Comprehensive Tech Stack Validation</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-emerald-400 mt-1" /> Security & Scalability Assessment</li>
-              </ul>
-              <Link to="/contact" className="w-full py-3 rounded-lg border border-emerald-500/30 text-emerald-400 text-center font-medium hover:bg-emerald-500/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500">Book Audit</Link>
+                </li>
+              ))}
+            </ol>
             </div>
+          </Reveal>
+        </section>
 
-            <div className="glass rounded-2xl p-8 border border-primary/40 bg-primary/5 hover:border-primary transition-all duration-300 relative flex flex-col transform hover:-translate-y-2">
-              <div className="absolute top-0 right-4 -translate-y-1/2">
-                <span className="bg-primary text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Most Popular</span>
-              </div>
-              <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2">Core Project Build</h3>
-              <p className="text-primary font-mono mb-6">Milestone <span className="text-xl">Based</span></p>
-              <ul className="space-y-3 mb-8 flex-1">
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> End-to-End System Development</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> Custom Application Architecture</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-primary mt-1" /> Production-Grade Cloud Deployment</li>
-              </ul>
-              <Link to="/contact" className="w-full py-3 rounded-lg bg-primary text-white text-center font-bold hover:bg-blue-600 transition-colors glow-blue focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">Start Project</Link>
-            </div>
-
-            <div className="glass rounded-2xl p-8 border border-white/5 hover:border-purple-500/30 transition-all duration-300 flex flex-col group">
-              <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2">Enterprise Partnership</h3>
-              <p className="text-purple-400 font-mono mb-6">Custom <span className="text-secondary text-base">/ monthly</span></p>
-              <ul className="space-y-3 mb-8 flex-1">
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-purple-400 mt-1" /> Dedicated Fractional Engineering</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-purple-400 mt-1" /> Continuous Infrastructure Scaling</li>
-                <li className="flex items-start gap-2 text-secondary text-sm"><FiCheck className="text-purple-400 mt-1" /> Guaranteed Priority SLA Support</li>
-              </ul>
-              <Link to="/contact" className="w-full py-3 rounded-lg border border-purple-500/30 text-purple-400 text-center font-medium hover:bg-purple-500/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500">Contact Sales</Link>
-            </div>
-          </div>
-        </div>
-
-
-        {/* ════════════════════════════════════════════
-            FAQ — FREQUENTLY ASKED QUESTIONS
-           ════════════════════════════════════════════ */}
-        <div
-          id="svc-faq"
-          ref={(el) => { sectionRefs.current['svc-faq'] = el; }}
-          className={`mb-32 transition-all duration-1000 delay-300 ${isVisible('svc-faq') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          <div className="text-center mb-16">
-            <span className="text-cyan-400 text-sm font-medium uppercase tracking-[0.3em] mb-4 block">Got Questions?</span>
-            <h2 className="text-4xl md:text-5xl font-bold font-space-grotesk text-white">
-              Frequently Asked
-            </h2>
-          </div>
-
-          <div className="max-w-3xl mx-auto space-y-4">
-            {faqs.map((faq, index) => (
-              <FaqItem key={index} question={faq.question} answer={faq.answer} />
-            ))}
-          </div>
-        </div>
-
-
-        {/* ════════════════════════════════════════════
-            CTA — FINAL CONVERSION BLOCK
-           ════════════════════════════════════════════ */}
-        <div
-          id="svc-cta"
-          ref={(el) => { sectionRefs.current['svc-cta'] = el; }}
-          className={`transition-all duration-1000 delay-300 ${isVisible('svc-cta') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-        >
-          <div className="relative rounded-3xl overflow-hidden">
-            {/* Gradient Background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-purple-500/10 to-cyan-500/20" />
-            <div className="absolute inset-0 glass" />
-
-            <div className="relative z-10 text-center py-20 px-8">
-              <h2 className="text-4xl md:text-6xl font-bold font-space-grotesk text-white mb-6">
-                Ready to build
-                <br />
-                <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                  something extraordinary?
-                </span>
+        {/* ═════════ 6. DATA + LIMITS ═════════ */}
+        <div className="grid lg:grid-cols-2 gap-4 md:gap-6 mb-16 md:mb-24">
+          <Reveal>
+            <section aria-labelledby="svc-data-h" className="glass rounded-2xl p-6 md:p-8 h-full">
+              <h2 id="svc-data-h" className="text-2xl md:text-3xl font-bold font-space-grotesk text-white mb-5">
+                How I handle your data
               </h2>
-
-              <p className="text-secondary text-lg max-w-2xl mx-auto mb-10">
-                Whether it's an AI agent, a full-stack app, or a data pipeline — let's turn your
-                idea into a production-ready system that actually works.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center gap-2 px-10 py-4 rounded-xl bg-primary hover:bg-blue-600 text-white font-bold text-lg transition-all duration-300 hover:scale-105 glow-blue group"
-                >
-                  Let's Talk
-                  <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <a
-                  href="mailto:04manank@gmail.com"
-                  className="inline-flex items-center gap-2 px-10 py-4 rounded-xl border border-primary/50 text-primary hover:bg-primary/10 font-medium text-lg transition-all duration-300"
-                >
-                  04manank@gmail.com
-                </a>
-              </div>
-
-              <p className="text-secondary/60 text-xs mt-8 uppercase tracking-wider">
-                Average response time — Under 24 hours
-              </p>
-            </div>
-          </div>
+              <ul className="space-y-3">
+                {dataHandling.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm md:text-base text-white/80 leading-relaxed">
+                    <FiCheck className="text-green-400 mt-1 flex-shrink-0" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <section aria-labelledby="svc-limits-h" className="glass rounded-2xl p-6 md:p-8 h-full">
+              <h2 id="svc-limits-h" className="text-2xl md:text-3xl font-bold font-space-grotesk text-white mb-5">
+                What I don’t do
+              </h2>
+              <ul className="space-y-3">
+                {limits.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm md:text-base text-white/80 leading-relaxed">
+                    <FiX className="text-white/50 mt-1 flex-shrink-0" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </Reveal>
         </div>
 
+        {/* ═════════ 7. ALSO AVAILABLE ═════════ */}
+        <section aria-labelledby="svc-also-h" className="mb-16 md:mb-24">
+          <SectionHead id="svc-also-h" label="Beyond AI" title={alsoAvailable.title} accent="text-purple-300" />
+          <Reveal>
+            <div className="glass rounded-2xl p-6 md:p-8 max-w-4xl mx-auto">
+              <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-3 mb-6">
+                {alsoAvailable.items.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-sm md:text-base text-white/85">
+                    <FiCheck className="text-primary mt-1 flex-shrink-0" aria-hidden="true" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-white/75 text-sm leading-relaxed pt-5 border-t border-white/10">
+                {alsoAvailable.proof} <span className="text-white/60">{alsoAvailable.note}</span>
+              </p>
+            </div>
+          </Reveal>
+        </section>
+
+        {/* ═════════ 8. FAQ ═════════ */}
+        <section aria-labelledby="svc-faq-h" className="mb-16 md:mb-24">
+          <SectionHead id="svc-faq-h" label="FAQ" title="Questions before you write" accent="text-cyan-300" />
+          <Reveal className="max-w-3xl mx-auto space-y-3">
+            {faqs.map((faq) => (
+              <FaqItem key={faq.q} q={faq.q} a={faq.a} />
+            ))}
+          </Reveal>
+        </section>
+
+        {/* ═════════ 9. FINAL CTA ═════════ */}
+        <Reveal>
+          <section aria-labelledby="svc-cta-h" className="relative rounded-3xl overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-purple-500/10 to-cyan-500/20" aria-hidden="true" />
+            <div className="absolute inset-0 glass" aria-hidden="true" />
+            <div className="relative z-10 text-center py-12 md:py-16 px-5 md:px-8">
+              <h2
+                id="svc-cta-h"
+                className="text-3xl md:text-5xl font-bold font-space-grotesk text-white mb-5 max-w-3xl mx-auto leading-tight"
+              >
+                {servicesCta.title}
+              </h2>
+              <p className="text-white/80 text-base md:text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+                {servicesCta.body}
+              </p>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 max-w-md sm:max-w-none mx-auto">
+                <a href={mailto('A task I’d like automated')} className={primaryBtn}>
+                  <FiMail aria-hidden="true" />
+                  Email me a task
+                </a>
+                <Link to="/contact" className={secondaryBtn}>
+                  Or use the contact page
+                  <FiArrowRight aria-hidden="true" />
+                </Link>
+              </div>
+              <p className="text-white/70 text-sm mt-5 break-all">{servicesCta.email}</p>
+            </div>
+          </section>
+        </Reveal>
       </div>
     </section>
-  );
-};
-
-
-/* ─── FAQ ACCORDION ITEM ─── */
-interface FaqItemProps {
-  question: string;
-  answer: string;
-}
-
-const FaqItem: React.FC<FaqItemProps> = ({ question, answer }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div
-      className={`glass rounded-2xl border transition-all duration-300 overflow-hidden ${
-        isOpen ? 'border-primary/30' : 'border-white/5 hover:border-white/10'
-      }`}
-    >
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-6 text-left cursor-pointer group"
-      >
-        <span className="text-white font-medium text-base pr-4 group-hover:text-primary transition-colors">
-          {question}
-        </span>
-        <FiChevronDown
-          className={`text-primary flex-shrink-0 transition-transform duration-300 ${
-            isOpen ? 'rotate-180' : ''
-          }`}
-          size={20}
-        />
-      </button>
-      <div
-        className={`transition-all duration-300 ease-in-out ${
-          isOpen ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
-        <div className="px-6 pb-6 pt-0">
-          <p className="text-secondary text-sm leading-relaxed">{answer}</p>
-        </div>
-      </div>
-    </div>
+    </>
   );
 };

@@ -1,6 +1,8 @@
+// Only certificates listed on the verified resume.
 export const certifications = [
+  'Stanford & DeepLearning.AI — Machine Learning Specialization',
   'DeepLearning.AI — Deep Learning Specialization',
-  'Stanford & DeepLearning.AI — Machine Learning',
+  'IBM — RAG and Agentic AI',
+  'DeepLearning.AI & AWS — Generative AI with LLMs',
   'Google — Prompting Essentials',
-  'Meta — Full Stack Developer Professional',
 ];

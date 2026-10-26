@@ -77,24 +77,36 @@ export const SkillsAvalanche: React.FC = () => {
     });
 
     World.add(engine.world, mouseConstraint);
-    
+
+    // Matter's mouse swallows wheel and touch events (preventDefault), which traps page scrolling
+    // while the pointer is over the box. Drop those listeners: mouse dragging still works, and
+    // touch / wheel scroll the page (the container also sets touch-action: pan-y).
+    const el = mouse.element as HTMLElement;
+    const m = mouse as unknown as Record<string, EventListener>;
+    el.removeEventListener('mousewheel', m.mousewheel);
+    el.removeEventListener('DOMMouseScroll', m.mousewheel);
+    el.removeEventListener('touchmove', m.mousemove);
+    el.removeEventListener('touchstart', m.mousedown);
+    el.removeEventListener('touchend', m.mouseup);
+
     const runner = Runner.create();
     Runner.run(runner, engine);
 
-    // Sync loop for DOM elements
+    // Sync loop for DOM elements. Track the latest frame id so cleanup really stops the loop.
+    let animationFrameId = 0;
     const syncBodies = () => {
       bodies.forEach((body, index) => {
-        const el = elementsRef.current[index];
-        if (el) {
+        const pill = elementsRef.current[index];
+        if (pill) {
           const { x, y } = body.position;
           // Apply translation. Subtract half width/height to center the div over the body center
-          el.style.transform = `translate(${x}px, ${y}px) rotate(${body.angle}rad) translate(-50%, -50%)`;
+          pill.style.transform = `translate(${x}px, ${y}px) rotate(${body.angle}rad) translate(-50%, -50%)`;
         }
       });
-      requestAnimationFrame(syncBodies);
+      animationFrameId = requestAnimationFrame(syncBodies);
     };
 
-    const animationFrameId = requestAnimationFrame(syncBodies);
+    animationFrameId = requestAnimationFrame(syncBodies);
 
     // Resize handler — walls use initial dimensions (acceptable for layout)
     const handleResize = () => { /* intentional no-op */ };
@@ -220,7 +232,7 @@ export const SkillsAvalanche: React.FC = () => {
        </div>
 
        {/* Physics Container */}
-       <div ref={sceneRef} className="flex-1 w-full relative">
+       <div ref={sceneRef} className="flex-1 w-full relative" style={{ touchAction: 'pan-y' }}>
           {flatSkills.map((skill, index) => (
              <div
                key={index}

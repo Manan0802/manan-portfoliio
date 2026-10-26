@@ -2,27 +2,48 @@
 
 @theme {
   --color-primary: #3B82F6;
-  --color-secondary: #8B5CF6;
+  /* Lightened from #8B5CF6 (4.35:1 on glass cards) to pass WCAG AA 4.5:1 for body text.
+     Computed contrast: about 6.8:1 on #141414, 8:1 on black. */
+  --color-secondary: #A78BFA;
   --color-tertiary: #06B6D4;
 
-  --font-space-grotesk: 'Space Grotesk', sans-serif;
-  --font-inter: 'Inter', sans-serif;
+  --font-space-grotesk: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
+  --font-inter: 'Inter', 'Inter Fallback', sans-serif;
   --font-bebas: 'Bebas Neue', sans-serif;
 
   --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Metric-matched local fallbacks (Arial resized to Inter / Space Grotesk widths and line metrics),
+   so the swap to the web fonts causes almost no layout shift. Values computed from the font files. */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial');
+  size-adjust: 107.5%;
+  ascent-override: 90%;
+  descent-override: 22.5%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'Space Grotesk Fallback';
+  src: local('Arial');
+  size-adjust: 111.6%;
+  ascent-override: 88.2%;
+  descent-override: 26.2%;
+  line-gap-override: 0%;
 }
 
 /* Design System Variables */
 :root {
   --background: #000000;
   --primary: #3B82F6;
-  --secondary: #8B5CF6;
+  --secondary: #A78BFA;
   --tertiary: #06B6D4;
   --text-primary: #FFFFFF;
   --text-secondary: #9CA3AF;
 
-  --font-space-grotesk: 'Space Grotesk', sans-serif;
-  --font-inter: 'Inter', sans-serif;
+  --font-space-grotesk: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
+  --font-inter: 'Inter', 'Inter Fallback', sans-serif;
   --font-bebas: 'Bebas Neue', sans-serif;
 }
 
@@ -63,11 +84,14 @@ select option {
   50% { transform: scale(1.1); opacity: 0.5; }
 }
 
-/* Custom Cursor */
+/* Custom Cursor — every part is position:fixed in viewport coordinates;
+   transforms are written from a single rAF loop (see hooks/useCursor.ts). */
 .custom-cursor {
   position: fixed;
   top: 0;
   left: 0;
+  width: 0;
+  height: 0;
   pointer-events: none;
   z-index: 9999;
   mix-blend-mode: difference;
@@ -78,8 +102,11 @@ select option {
   height: 4px;
   background: #fff;
   border-radius: 50%;
-  position: absolute;
-  transform: translate(-50%, -50%);
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate3d(-100px, -100px, 0);
+  will-change: transform;
 }
 
 .custom-cursor-ring {
@@ -87,19 +114,42 @@ select option {
   height: 40px;
   border: 2px solid rgba(59, 130, 246, 0.5);
   border-radius: 50%;
-  position: absolute;
-  transform: translate(-50%, -50%) scale(1);
-  transition: transform 0.2s, border-color 0.2s;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate3d(-100px, -100px, 0);
+  will-change: transform;
+  transition: width 0.2s, height 0.2s, border-color 0.2s;
 }
 
 .custom-cursor-ring.hover {
-  transform: translate(-50%, -50%) scale(2);
+  width: 64px;
+  height: 64px;
   border-color: #3B82F6;
 }
 
 .custom-cursor-ring.character {
+  width: 56px;
+  height: 56px;
   border-color: #8B5CF6;
-  transform: translate(-50%, -50%) scale(1.5);
+}
+
+.custom-cursor-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  color: #fff;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  transform: translate3d(-100px, -100px, 0);
+  transition: opacity 0.2s;
+}
+
+/* Visible keyboard focus everywhere (components can still override with their own ring) */
+:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
 }
 
 /* Glassmorphism */
@@ -280,10 +330,10 @@ a[href*="spline.design"] {
    FONT UTILITIES (Tailwind v4 custom)
    ============================================ */
 .font-space-grotesk {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: 'Space Grotesk', 'Space Grotesk Fallback', sans-serif;
 }
 .font-inter {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', 'Inter Fallback', sans-serif;
 }
 .font-bebas {
   font-family: 'Bebas Neue', sans-serif;
@@ -359,13 +409,34 @@ a[href*="spline.design"] {
   }
 }
 
-/* Reduced motion preference */
+/* Reduced motion preference (JS-driven motion — typewriter, Lenis, cursor, counters — checks the same query) */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
+}
+
+/* Skip link — first focusable element on every page */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 10001;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #000000;
+  font-weight: 700;
+  font-size: 14px;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }

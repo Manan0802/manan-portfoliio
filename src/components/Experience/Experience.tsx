@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { SectionTitle } from '../shared/SectionTitle';
 import { experiences } from '../../data/experience';
 import { certifications } from '../../data/certifications';
-import { Particles } from '../Character/Particles';
-import { Canvas } from '@react-three/fiber';
+import { Starfield } from '../shared/Starfield';
+import { PageMeta } from '../shared/PageMeta';
 
 const CustomMarquee: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="overflow-hidden relative flex w-full py-4 group">
@@ -49,19 +49,20 @@ export const Experience: React.FC = () => {
 
   return (
     <section id="experience" className="pt-32 pb-12 px-6 relative z-20">
-      {/* Starfield Background */}
+      <PageMeta
+        title="Experience & Education | Manan Kumar"
+        description="AI Engineer at a fintech startup (production LLM agents, RAG, evals, voice AI); previously an AI engineering intern at IndiaMART building LangGraph agents. B.Tech, Software Engineering, DTU."
+        path="/experience"
+      />
+
+      {/* Starfield Background (static 2D canvas, no WebGL) */}
       <div className="absolute inset-0 pointer-events-none opacity-50">
-        <Canvas
-          camera={{ position: [0, 0, 5], fov: 45 }}
-          gl={{ antialias: true, alpha: true }}
-          frameloop="always"
-        >
-          <Particles count={5000} />
-        </Canvas>
+        <Starfield count={450} />
       </div>
 
       <div className="max-w-5xl mx-auto relative z-10">
         <SectionTitle
+          as="h1"
           title="Experience & Education"
           subtitle="My professional journey and academic foundation."
           glow="purple"
@@ -86,9 +87,9 @@ export const Experience: React.FC = () => {
           className={`mt-32 relative transition-all duration-1000 delay-300 ${isVisible('exp-certs') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
         >
           <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-48 h-48 bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
-          <h3 className="text-2xl font-space-grotesk font-bold text-center text-white mb-8 relative z-10">
+          <h2 className="text-2xl font-space-grotesk font-bold text-center text-white mb-8 relative z-10">
             Certifications & <span className="text-primary">Achievements</span>
-          </h3>
+          </h2>
           <div className="glass rounded-3xl p-6 overflow-hidden border border-white/5 relative z-10 shadow-[0_0_30px_rgba(59,130,246,0.05)]">
             <CustomMarquee>
               {certifications.map((cert, index) => (
@@ -109,8 +110,8 @@ export const Experience: React.FC = () => {
         >
           <AchievementBadge
             icon="🏆"
-            title="Top 10% Globally"
-            description="LeetCode (400+ problems)"
+            title="400+ Problems"
+            description="Solved on LeetCode"
           />
           <AchievementBadge
             icon="🥈"
@@ -119,8 +120,8 @@ export const Experience: React.FC = () => {
           />
           <AchievementBadge
             icon="🎯"
-            title="Contest Rating 1650+"
-            description="Top 20% Globally"
+            title="Contest Rating 1600+"
+            description="LeetCode"
           />
         </div>
       </div>
@@ -160,12 +161,12 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience, index }) =>
       <div className="absolute left-[-11px] md:left-1/2 transform md:-translate-x-1/2 w-6 h-6 rounded-full border-[4px] border-[#050505] bg-primary z-10 shadow-[0_0_15px_rgba(59,130,246,0.8)] mt-6 md:mt-0" />
 
       {/* Card Content */}
-      <div className={`w-full md:w-1/2 pl-10 md:pl-0 ${isLeft ? 'md:pr-16 md:text-right' : 'md:pl-16 md:text-left'}`}>
+      <div className={`w-full md:w-1/2 pl-10 md:pl-0 ${isLeft ? 'md:pr-16' : 'md:pl-16'} md:text-left`}>
         <div className="glass rounded-3xl p-8 border border-white/5 hover:border-primary/40 transition-all duration-300 hover:shadow-[0_0_40px_rgba(59,130,246,0.15)] group relative overflow-hidden">
           {/* Subtle Background Glow behind text */}
           <div className={`absolute top-0 w-32 h-32 bg-primary/10 rounded-full blur-[60px] pointer-events-none transition-all duration-500 group-hover:bg-primary/20 ${isLeft ? 'right-0' : 'left-0'}`} />
           
-          <div className={`flex flex-wrap gap-2 mb-6 relative z-10 ${isLeft ? 'md:justify-end' : 'justify-start'}`}>
+          <div className={`flex flex-wrap gap-2 mb-6 relative z-10 justify-start`}>
             {experience.tags.map((tag) => (
               <span
                 key={tag}
@@ -176,26 +177,25 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({ experience, index }) =>
             ))}
           </div>
 
-          <h3 className="text-2xl font-bold font-space-grotesk text-white mb-2 relative z-10">
+          <h2 className="text-2xl font-bold font-space-grotesk text-white mb-2 relative z-10">
             {experience.company}
-          </h3>
+          </h2>
           <p className="font-semibold text-lg text-primary mb-3 relative z-10">{experience.role}</p>
-          <div className={`flex items-center gap-4 text-sm text-secondary mb-6 relative z-10 ${isLeft ? 'md:justify-end' : 'justify-start'}`}>
+          <div className={`flex items-center gap-4 text-sm text-secondary mb-6 relative z-10 justify-start`}>
             <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> {experience.duration}</span>
             <span className="text-white/20">|</span>
             <span>📍 {experience.location}</span>
           </div>
 
           {experience.highlights.length > 0 && (
-            <ul className={`space-y-3 relative z-10 ${isLeft ? 'md:text-right' : 'md:text-left'} text-white/70`}>
+            <ul className={`space-y-3 relative z-10 md:text-left text-white/70`}>
               {experience.highlights.map((highlight, i) => {
                 const isBullet = highlight.trim().startsWith('•');
                 const text = isBullet ? highlight.trim().substring(1).trim() : highlight;
                 return (
                   <li key={i} className="text-[15px] leading-relaxed flex items-start gap-3">
-                    <span className={`text-primary font-bold ${isLeft ? 'md:hidden' : 'block'}`}>›</span>
+                    <span className="text-primary font-bold">›</span>
                     <span className="flex-1">{text}</span>
-                    <span className={`text-primary font-bold hidden ${isLeft ? 'md:block' : 'hidden'}`}>‹</span>
                   </li>
                 );
               })}
@@ -216,7 +216,7 @@ interface AchievementBadgeProps {
 const AchievementBadge: React.FC<AchievementBadgeProps> = ({ icon, title, description }) => (
   <div className="glass rounded-3xl p-8 text-center border border-white/5 hover:border-purple-500/30 transition-all duration-300 hover:shadow-[0_0_30px_rgba(168,85,247,0.1)] group">
     <div className="text-5xl mb-6 transform transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">{icon}</div>
-    <h4 className="text-xl font-bold font-space-grotesk text-white mb-3 tracking-wide">{title}</h4>
+    <h3 className="text-xl font-bold font-space-grotesk text-white mb-3 tracking-wide">{title}</h3>
     <p className="text-secondary">{description}</p>
   </div>
 );

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -42,47 +42,4 @@ export const useScrollAnimation = ({
   return elementRef;
 };
 
-export const useCountUp = (end: number, duration: number = 2, startOnView: boolean = true) => {
-  const [count, setCount] = useState(0);
-  const elementRef = useRef<HTMLElement>(null);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    if (!startOnView) {
-      const startTime = performance.now();
-      const animate = (currentTime: number) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / (duration * 1000), 1);
-        setCount(Math.floor(progress * end));
-        if (progress < 1) requestAnimationFrame(animate);
-      };
-      requestAnimationFrame(animate);
-      return;
-    }
-
-    const element = elementRef.current;
-    if (!element) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          const startTime = performance.now();
-          const animate = (currentTime: number) => {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / (duration * 1000), 1);
-            setCount(Math.floor(progress * end));
-            if (progress < 1) requestAnimationFrame(animate);
-          };
-          requestAnimationFrame(animate);
-        }
-      },
-      { threshold: 0.5 }
-    );
-
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [end, duration, startOnView]);
-
-  return { count, ref: elementRef };
-};
+// useCountUp now lives in ./useCountUp (keeps GSAP out of the home bundle).

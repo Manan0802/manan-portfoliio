@@ -13,7 +13,8 @@ export default {
       },
       colors: {
         'primary': '#3B82F6',
-        'secondary': '#8B5CF6',
+        // Lightened from #8B5CF6 so body text passes WCAG AA (4.5:1) on glass cards. Mirrors @theme in src/index.css.
+        'secondary': '#A78BFA',
         'tertiary': '#06B6D4',
       },
       animation: {

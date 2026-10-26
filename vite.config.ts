@@ -9,21 +9,7 @@ export default defineConfig({
       '@': '/src',
     },
   },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('three') || id.includes('@react-three') || id.includes('@splinetool')) {
-              return 'vendor-3d';
-            }
-            if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor-react';
-            }
-            return 'vendor-core';
-          }
-        }
-      }
-    }
-  }
+  // No manualChunks on purpose: forcing three / R3F / Spline into one vendor chunk made the
+  // 1.6 MB 3D bundle part of every route's graph. Routes are React.lazy() chunks now, so
+  // Rollup splits shared vendor code per route and 3D code only loads where it is imported.
 })

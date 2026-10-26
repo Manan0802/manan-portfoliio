@@ -5,6 +5,8 @@ interface SectionTitleProps {
   subtitle?: string;
   align?: 'left' | 'center' | 'right';
   glow?: 'blue' | 'purple' | 'cyan';
+  /** Heading level. Defaults to h2; a page's main title should pass "h1". */
+  as?: 'h1' | 'h2' | 'h3';
 }
 
 export const SectionTitle: React.FC<SectionTitleProps> = ({
@@ -12,6 +14,7 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
   subtitle,
   align = 'center',
   glow = 'blue',
+  as: Heading = 'h2',
 }) => {
   const alignClasses = {
     left: 'text-left',
@@ -21,15 +24,15 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
 
   const glowColors = {
     blue: 'text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]',
-    purple: 'text-secondary drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]',
+    purple: 'text-secondary drop-shadow-[0_0_10px_rgba(167,139,250,0.5)]',
     cyan: 'text-tertiary drop-shadow-[0_0_10px_rgba(6,182,212,0.5)]',
   };
 
   return (
     <div className={`mb-16 ${alignClasses[align]}`}>
-      <h2 className={`text-4xl md:text-5xl font-bold font-space-grotesk ${glowColors[glow]}`}>
+      <Heading className={`text-4xl md:text-5xl font-bold font-space-grotesk ${glowColors[glow]}`}>
         {title}
-      </h2>
+      </Heading>
       {subtitle && (
         <p className="mt-4 text-lg text-secondary max-w-2xl mx-auto">
           {subtitle}

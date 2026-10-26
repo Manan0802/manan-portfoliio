@@ -1,107 +1,99 @@
-import React, { useState } from 'react';
-import { FiGithub, FiLinkedin, FiMail, FiCode, FiArrowRight, FiArrowUp } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { FiGithub, FiLinkedin, FiMail, FiCode, FiArrowUp } from 'react-icons/fi';
+import { Link, useLocation } from 'react-router-dom';
+
+const EMAIL = '04manank@gmail.com';
 
 const socialLinks = [
   { icon: <FiGithub />, label: 'GitHub', href: 'https://github.com/Manan0802' },
   { icon: <FiLinkedin />, label: 'LinkedIn', href: 'https://www.linkedin.com/in/manan-kumar-2229291b9/' },
   { icon: <FiCode />, label: 'LeetCode', href: 'https://leetcode.com/u/04manank/' },
-  { icon: <FiMail />, label: 'Email', href: 'mailto:04manank@gmail.com' },
+  { icon: <FiMail />, label: 'Email', href: `mailto:${EMAIL}` },
+];
+
+const navLinks = [
+  { name: 'Home', path: '/' },
+  { name: 'Experience', path: '/experience' },
+  { name: 'Projects', path: '/projects' },
+  { name: 'Services', path: '/services' },
+  { name: 'Contact', path: '/contact' },
 ];
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
+  const { pathname } = useLocation();
 
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Experience', path: '/experience' },
-    { name: 'Projects', path: '/projects' },
-    { name: 'Services', path: '/services' },
-    { name: 'Contact', path: '/contact' }
-  ];
+  // Home has its own closing CTA band and /contact is the CTA, so the footer one is skipped there.
+  const showCta = pathname !== '/' && pathname !== '/contact';
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email.trim()) {
-      // Opens a mailto as a lightweight zero-backend lead capture
-      window.location.href = `mailto:04manank@gmail.com?subject=AI Stack Newsletter&body=Subscribe: ${email}`;
-      setSubscribed(true);
-    }
   };
 
   return (
     <footer className="py-14 px-6 border-t border-white/10">
       <div className="max-w-7xl mx-auto">
 
-        {/* Email capture — Growth Engine lead magnet */}
-        <div
-          className="rounded-2xl p-8 mb-10 text-center"
-          style={{ background: 'rgba(59,130,246,0.05)', border: '1px solid rgba(59,130,246,0.15)' }}
-        >
-          <h3 className="text-lg font-bold font-space-grotesk mb-1 text-white">
-            Get my <span className="text-primary">AI Architecture Digest</span>
-          </h3>
-          <p className="text-secondary text-sm mb-5">
-            Occasional deep-dives on LLM systems, vector search, and agentic design patterns.
-          </p>
-          {subscribed ? (
-            <p className="text-green-400 text-sm font-medium">✅ Opening your mail app — see you in your inbox!</p>
-          ) : (
-            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                className="flex-1 px-4 py-3 rounded-full text-sm bg-white/5 border border-white/10 text-white placeholder-white/30 outline-none focus:border-primary/50 transition-colors min-h-[46px]"
-                aria-label="Enter your email to subscribe"
-              />
-              <button
-                type="submit"
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-bold bg-primary text-white hover:bg-blue-600 transition-colors min-h-[46px] min-w-[44px]"
-                aria-label="Subscribe to AI digest"
+        {showCta && (
+          <div
+            className="rounded-2xl p-8 mb-10 text-center"
+            style={{ background: 'rgba(59,130,246,0.05)', border: '1px solid rgba(59,130,246,0.15)' }}
+          >
+            <h2 className="text-lg font-bold font-space-grotesk mb-1 text-white">Have a project in mind?</h2>
+            <p className="text-white/70 text-sm mb-5">Send me one task you’d like automated, or a role you’d like to talk about.</p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <a
+                href={`mailto:${EMAIL}?subject=Portfolio%20enquiry`}
+                className="inline-flex items-center justify-center px-6 py-3 rounded-full text-sm font-bold bg-white text-black min-h-[46px]"
               >
-                Subscribe <FiArrowRight />
-              </button>
-            </form>
-          )}
-        </div>
+                Email me
+              </a>
+              <Link
+                to="/contact"
+                className="inline-flex items-center justify-center px-6 py-3 rounded-full text-sm font-bold text-white border border-white/20 bg-white/5 hover:bg-white/10 min-h-[46px] transition-colors"
+              >
+                Contact page
+              </Link>
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-10 pb-10 border-b border-white/5">
-          <div className="flex flex-wrap justify-center md:justify-start gap-6 text-sm font-medium">
+          <nav aria-label="Footer" className="flex flex-wrap justify-center md:justify-start gap-x-2 text-sm font-medium">
             {navLinks.map((item) => (
-              <Link 
-                key={item.name} 
-                to={item.path} 
-                onClick={scrollToTop}
-                className="text-secondary hover:text-primary transition-colors"
+              <Link
+                key={item.name}
+                to={item.path}
+                className="text-secondary hover:text-white transition-colors px-3 py-3 min-h-[44px] inline-flex items-center"
                 data-cursor="hover"
               >
                 {item.name}
               </Link>
             ))}
-          </div>
+            <a
+              href="/resume/Manan_Kumar_Resume.pdf"
+              download="Manan_Kumar_Resume.pdf"
+              className="text-secondary hover:text-white transition-colors px-3 py-3 min-h-[44px] inline-flex items-center"
+              data-cursor="hover"
+            >
+              Resume
+            </a>
+          </nav>
 
-          <button 
+          <button
+            type="button"
             onClick={scrollToTop}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors text-sm font-bold border border-white/10 group"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 text-white transition-colors text-sm font-bold border border-white/10 group min-h-[44px]"
             data-cursor="hover"
             aria-label="Back to top"
           >
-            Back to Top <FiArrowUp className="group-hover:-translate-y-1 transition-transform" />
+            Back to Top <FiArrowUp className="group-hover:-translate-y-1 transition-transform" aria-hidden="true" />
           </button>
         </div>
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
-          <div className="text-2xl font-bold font-bebas tracking-wider text-primary">
+          <div className="text-2xl font-bold font-bebas tracking-wider text-primary" aria-hidden="true">
             MK
           </div>
 
@@ -111,9 +103,9 @@ export const Footer: React.FC = () => {
               <a
                 key={link.label}
                 href={link.href}
-                target="_blank"
+                target={link.href.startsWith('mailto:') ? undefined : '_blank'}
                 rel="noopener noreferrer"
-                className="text-secondary hover:text-primary transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-white/5"
+                className="text-secondary hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-white/5"
                 data-cursor="hover"
                 aria-label={link.label}
               >
@@ -124,20 +116,9 @@ export const Footer: React.FC = () => {
 
           {/* Copyright */}
           <div className="text-center md:text-right">
-            <p className="text-secondary text-sm">
-              © {currentYear} Manan Kumar
-            </p>
-            <p className="text-primary text-xs mt-1">
-              Built with React + Three.js
-            </p>
+            <p className="text-secondary text-sm">© {currentYear} Manan Kumar</p>
+            <p className="text-white/60 text-xs mt-1">Designed &amp; developed by Manan Kumar</p>
           </div>
-        </div>
-
-        {/* Bottom tagline */}
-        <div className="text-center mt-8">
-          <p className="text-secondary text-sm">
-            Designed &amp; Developed by Manan Kumar
-          </p>
         </div>
       </div>
     </footer>

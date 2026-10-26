@@ -134,6 +134,7 @@ export const CharacterScene: React.FC = () => {
 
   return (
     <div
+      aria-hidden="true"
       className="absolute inset-0 z-[2] overflow-hidden"
       style={{ pointerEvents: isMobile ? 'none' : 'auto' }}
     >
